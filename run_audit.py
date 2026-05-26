@@ -73,15 +73,53 @@ def main():
     from smoke_test import RULES, ClaimType, RuleStatus, TargetClaim, aggregate
 
     claim_path = Path(args.claim_path)
-    with open(claim_path) as f:
-        spec = yaml.safe_load(f)
+    if not claim_path.exists():
+        print(f"ERROR: claim file not found: {claim_path}", file=sys.stderr)
+        return 5
+
+    # v1.4.2: pre-validate input before pushing into the rule engine.
+    try:
+        with open(claim_path) as f:
+            raw = f.read()
+        if not raw.strip():
+            print(f"ERROR: claim file is empty: {claim_path}", file=sys.stderr)
+            return 5
+        spec = yaml.safe_load(raw)
+    except yaml.YAMLError as e:
+        print(f"ERROR: YAML parse error in {claim_path}:", file=sys.stderr)
+        print(f"  {e}", file=sys.stderr)
+        return 5
+
+    if not isinstance(spec, dict) or "claim" not in spec:
+        print(f"ERROR: {claim_path} does not contain a 'claim' top-level key",
+              file=sys.stderr)
+        return 5
 
     c = spec["claim"]
+    if not isinstance(c, dict):
+        print(f"ERROR: 'claim' in {claim_path} is not a mapping", file=sys.stderr)
+        return 5
+
+    required = {"target_symbol", "indication", "mechanism", "claim_type"}
+    missing = required - set(c.keys())
+    if missing:
+        print(f"ERROR: {claim_path} missing required claim fields: "
+              f"{sorted(missing)}", file=sys.stderr)
+        return 5
+
+    try:
+        claim_type_enum = ClaimType(c["claim_type"])
+    except ValueError:
+        valid = [ct.value for ct in ClaimType]
+        print(f"ERROR: invalid claim_type {c['claim_type']!r} in {claim_path}. "
+              f"Valid: {valid}", file=sys.stderr)
+        return 5
+
     claim = TargetClaim(
         target_symbol=c["target_symbol"],
         indication=c["indication"],
         mechanism=c["mechanism"],
-        claim_type=ClaimType(c["claim_type"]),
+        claim_type=claim_type_enum,
         uniprot_id=c.get("uniprot_id"),
     )
 

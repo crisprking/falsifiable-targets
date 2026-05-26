@@ -43,28 +43,24 @@ works to verify conformance.
 
 ## Section names and expected fields
 
-This table is the canonical contract. If your adapter populates a field
-not listed here, document it; if your adapter populates one that *is*
-listed here, follow the type convention.
+This table is the canonical contract, **verified against `smoke_test.py`
+as of v1.4.2.**
 
 ### `orthology`
 
 | Field | Type | Used by | Meaning |
 |---|---|---|---|
-| `sources_agreeing` | int | R1 | How many ortholog DBs return a human ortholog (strict) |
+| `sources_agreeing` | int | R1 | How many ortholog DBs return a human ortholog |
 | `sources_total` | int | R1 | How many ortholog DBs were consulted |
-| `sources_agreeing_uniprot_lower_bound` | int | R1 (fallback) | Live UniProt cross-references — lower bound on agreement |
-| `sources_total_uniprot_lower_bound` | int | R1 (fallback) | Live UniProt cross-references — total consulted |
 
 ### `chemistry`
 
 | Field | Type | Used by | Meaning |
 |---|---|---|---|
 | `chembl_distinct_compounds` | int | R2, R6 | Distinct compounds with activity vs this target |
-| `chembl_target_id` | str | R6 | ChEMBL target ID (e.g., "CHEMBL2929") |
-| `chembl_pfam_class_collapse_fraction` | float \[0,1\] | R6 | Fraction of binders that collapse onto a paralog class |
-| `chembl_paralog_compound_counts` | dict[str, int] | R6 (heuristic) | Per-paralog compound count (live ChEMBL adapter) |
-| `max_phase` | int \[0,4\] | R2 | Highest clinical phase reached |
+| `chembl_pfam_class_collapse_fraction` | float [0,1] | R6 | Fraction of binders that collapse onto a paralog class |
+| `chembl_pfam_class_collapse_target_symbol` | str | R6 | The paralog onto which compounds collapse |
+| `chembl_paralog_compound_counts` | dict[str, int] | R6 (heuristic) | Per-paralog compound count |
 
 ### `genetics`
 
@@ -72,33 +68,32 @@ listed here, follow the type convention.
 |---|---|---|---|
 | `gwas_hits` | int | R3 | Number of genome-wide-significant GWAS associations |
 | `mendelian_evidence` | bool | R3 | Loss-of-function in humans alters indication phenotype |
-| `somatic_driver` | bool | R3 | Recurrent somatic driver in indication (oncology) |
-| `open_targets_score` | float \[0,1\] | R3 | Open Targets composite (if integrated) |
+| `somatic_driver_evidence` | bool | R3 | Recurrent somatic driver in indication (oncology). **Note: field name is `somatic_driver_evidence`, not `somatic_driver`.** |
+| `loss_of_function_phenotype` | bool | R3 | Documented LoF phenotype consistent with mechanism |
+| `clinical_outcome_contested` | bool | R3 | **Mechanism plausible but clinical trials failed** (CETP/BACE1 archetype). When true, R3 emits a substantive caveat distinguishing "mechanism is real" from "drug works clinically." |
 
 ### `expression`
 
 | Field | Type | Used by | Meaning |
 |---|---|---|---|
 | `target_tissue_expressed` | bool | R4 | Detectably expressed in indication-relevant tissue |
-| `uniprot_tissue_text` | str | R4 | Free-text tissue annotation from UniProt |
-| `hpa_tissue_tpm_max` | float | R4 | Max TPM across HPA tissue panel (if HPA adapter) |
 
 ### `reproducibility`
 
 | Field | Type | Used by | Meaning |
 |---|---|---|---|
-| `independent_replications` | int | R5 | Number of independent labs reproducing the result |
 | `retracted` | bool | R5 | Primary claim source is retracted |
-| `pubpeer_serious_concerns` | bool | R5 | Substantive PubPeer concerns on primary source |
+| `retraction_year` | int | R5 | Year of retraction |
+| `rebuttals_count` | int | R5 | Number of formal peer-reviewed rebuttals |
+| `independent_replications` | int | R5 | Number of independent labs reproducing the result |
 
 ### `selectivity`
 
 | Field | Type | Used by | Meaning |
 |---|---|---|---|
-| `selectivity_data` | bool | R7 | Any selectivity data exists (vs paralogs / off-targets) |
+| `selectivity_data` | bool | R7 | Any selectivity data exists |
 | `selectivity_index_log` | float | R7 | log10(IC50_offtarget / IC50_target) |
 | `off_targets_in_indication_relevant_tissue` | bool | R7 | Off-target hits express in indication tissue |
-| `closest_paralog_offtarget_log` | float | R7 | Same as selectivity_index_log but for nearest paralog |
 
 ### `structure`
 
@@ -108,7 +103,16 @@ listed here, follow the type convention.
 | `pdb_count` | int | (informational) | Number of PDB structures |
 | `alphafold_plddt` | float | (informational) | AlphaFold confidence |
 
----
+### Documented-but-unimplemented fields (v1.5 placeholders)
+
+Setting these has no effect on the verdict in v1.4.x:
+
+- `chemistry.max_phase`, `chemistry.chembl_target_id` (informational only)
+- `genetics.open_targets_score` (v1.5 Open Targets adapter planned)
+- `reproducibility.pubpeer_serious_concerns` (v1.5 PubPeer adapter planned)
+- `expression.uniprot_tissue_text`, `expression.hpa_tissue_tpm_max`
+- `selectivity.closest_paralog_offtarget_log`
+- `orthology.sources_agreeing_uniprot_lower_bound`, `orthology.sources_total_uniprot_lower_bound`
 
 ## Caching
 

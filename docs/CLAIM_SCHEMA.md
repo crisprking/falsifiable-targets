@@ -155,6 +155,23 @@ FAIL: claims/your_claim.yaml
 
 ---
 
+
+---
+
+## Field name reference (canonical, v1.4.2+)
+
+Field names in fixture sections must match exactly what the engine reads.
+The canonical list lives in [`docs/ADAPTER_PROTOCOL.md`](ADAPTER_PROTOCOL.md).
+Common gotchas:
+
+| If you meant... | Use this exact name |
+|---|---|
+| somatic driver in oncology | `somatic_driver_evidence` (not `somatic_driver`) |
+| mechanism plausible but trials failed (CETP/BACE1) | `clinical_outcome_contested: true` under `genetics` |
+| LoF phenotype | `loss_of_function_phenotype: true` under `genetics` |
+| retraction year | `retraction_year` (int) under `reproducibility` |
+| formal rebuttal count | `rebuttals_count` (int) under `reproducibility` |
+
 ## Versioning
 
 This schema is at v1.0 (defined alongside ruleset v1.2.0 and tool v1.4.0).

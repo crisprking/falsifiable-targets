@@ -1,6 +1,39 @@
 # Changelog
 
 
+
+## [1.4.2] — 2026-05-26 — Documentation alignment + ft-audit input validation
+
+**Patch release. No rule changes. Ruleset SHA unchanged from v1.4.0/v1.4.1.**
+
+### Documentation fixes (high impact)
+
+`docs/ADAPTER_PROTOCOL.md` and `docs/CLAIM_SCHEMA.md` field-name reference
+tables now match what the engine actually reads. Pre-v1.4.2 users who
+followed the docs literally would have hit silent calibration drift on:
+
+- Oncology claims using `somatic_driver` (doc name) instead of
+  `somatic_driver_evidence` (engine reads this) silently lost R3 genetics
+  support → unexpected FALSIFIED_WITH_CAVEATS on EGFR, BRAF, etc.
+- Clinically-failed-but-mechanistically-plausible claims (CETP, BACE1,
+  SYK family) had no way to encode the failure mode in docs. The engine
+  reads `clinical_outcome_contested: true` under `genetics`; now documented.
+- `pubpeer_serious_concerns`, `max_phase`, `open_targets_score`, others
+  documented but never read; now flagged as v1.5 placeholders.
+
+### UX fix: `ft-audit` now surfaces validation errors
+
+Previously raised Python tracebacks on malformed input. Now exits with
+code 5 and a friendly message for empty file / bad YAML / missing
+required fields / invalid claim_type.
+
+### Verified
+
+ft-smoke 11/11 sentinels still pass. Ruleset SHA unchanged
+(`35ef2b2ab5363298...`). TYK2 audit produces byte-identical report to
+v1.4.1.
+
+
 ## [1.4.1] - 2026-05-26 — Packaging hotfix
 
 **Hotfix release. No rule changes.** Fixes a packaging bug in v1.4.0 where
