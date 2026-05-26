@@ -1,0 +1,187 @@
+version: "1.1.0"
+
+sentinels:
+
+  - id: PCSK9_LDL
+    category: positive
+    expected_verdict: SURVIVED
+    claim:
+      target_symbol: PCSK9
+      uniprot_id: Q8NBP7
+      indication: hypercholesterolemia
+      mechanism: "Loss-of-function reduces LDL-C; antibody inhibition mimics."
+      claim_type: validated_mechanism
+    fixture:
+      orthology: {sources_agreeing: 4, sources_total: 4}
+      genetics: {gwas_hits: 18, loss_of_function_phenotype: "lifelong low LDL", mendelian_evidence: true}
+      chemistry: {chembl_distinct_compounds: 1247, max_phase: 4}
+      expression: {target_tissue_expressed: true}
+      reproducibility: {retracted: false, rebuttals_count: 0, independent_replications: 47}
+      selectivity: {selectivity_data: true, off_targets_in_indication_relevant_tissue: false}
+
+  - id: BCR_ABL_CML
+    category: positive
+    expected_verdict: SURVIVED
+    claim:
+      target_symbol: BCR-ABL1
+      uniprot_id: A9UF07
+      indication: chronic myeloid leukemia
+      mechanism: "Fusion kinase drives transformation; inhibition is curative-ish."
+      claim_type: validated_mechanism
+    fixture:
+      orthology: {sources_agreeing: 4, sources_total: 4}
+      genetics: {gwas_hits: 0, somatic_driver_evidence: true, loss_of_function_phenotype: "fusion presence pathognomonic"}
+      chemistry: {chembl_distinct_compounds: 892, max_phase: 4}
+      expression: {target_tissue_expressed: true}
+      reproducibility: {retracted: false, rebuttals_count: 0, independent_replications: 200}
+      selectivity: {selectivity_data: true, off_targets_in_indication_relevant_tissue: false}
+
+  - id: TNF_RA
+    category: positive
+    expected_verdict: SURVIVED
+    claim:
+      target_symbol: TNF
+      uniprot_id: P01375
+      indication: rheumatoid arthritis
+      mechanism: "Pro-inflammatory cytokine; neutralization reduces joint destruction."
+      claim_type: validated_mechanism
+    fixture:
+      orthology: {sources_agreeing: 4, sources_total: 4}
+      genetics: {gwas_hits: 11, loss_of_function_phenotype: "haploinsufficiency increases infection risk"}
+      chemistry: {chembl_distinct_compounds: 2103, max_phase: 4}
+      expression: {target_tissue_expressed: true}
+      reproducibility: {retracted: false, rebuttals_count: 0, independent_replications: 500}
+      selectivity: {selectivity_data: true, off_targets_in_indication_relevant_tissue: false}
+
+  - id: SAT_HDAC4_PHANTOM
+    category: negative
+    expected_verdict: FALSIFIED
+    claim:
+      target_symbol: SAT
+      uniprot_id: null
+      indication: madurella mycetoma
+      mechanism: "Putative novel fungal HDAC variant (phantom)."
+      claim_type: novel_target
+    fixture:
+      orthology: {sources_agreeing: 0, sources_total: 4, ortholog_count_human_pathogen: 0}
+      genetics: {gwas_hits: 0}
+      chemistry:
+        chembl_distinct_compounds: 1842
+        max_phase: 0
+        chembl_pfam_class_collapse_fraction: 0.95
+        chembl_pfam_class_collapse_target_symbol: "HDAC4"
+      expression: {}
+      reproducibility: {retracted: false, rebuttals_count: 0}
+      selectivity: {selectivity_data: false}
+
+  - id: STAP_CELLS_OBOKATA
+    category: negative
+    expected_verdict: FALSIFIED
+    claim:
+      target_symbol: STAP
+      uniprot_id: null
+      indication: regenerative medicine
+      mechanism: "Stimulus-triggered acquisition of pluripotency via acid bath."
+      claim_type: extraordinary_claim
+    fixture:
+      orthology: {}
+      genetics: {}
+      chemistry: {}
+      expression: {}
+      reproducibility: {retracted: true, retraction_year: 2014, rebuttals_count: 7, independent_replications: 0}
+      selectivity: {}
+
+  - id: ARSENIC_LIFE_GFAJ1
+    category: negative
+    expected_verdict: FALSIFIED
+    claim:
+      target_symbol: GFAJ1_AsDNA
+      uniprot_id: null
+      indication: astrobiology
+      mechanism: "Bacterium incorporates arsenic into DNA backbone in place of phosphorus."
+      claim_type: extraordinary_claim
+    fixture:
+      orthology: {}
+      genetics: {}
+      chemistry: {}
+      expression: {}
+      reproducibility: {retracted: false, rebuttals_count: 2, independent_replications: 0}
+      selectivity: {}
+
+  - id: PEPTIDOMIMETIC_CRUZAIN_SELECTIVITY
+    category: edge_case
+    expected_verdict: FALSIFIED_WITH_CAVEATS
+    claim:
+      target_symbol: CRUZAIN_PEPTIDOMIMETICS
+      uniprot_id: P25779
+      indication: Chagas disease
+      mechanism: "ChEMBL peptidomimetic series claimed as cruzain inhibitors."
+      claim_type: chemistry_series
+    fixture:
+      orthology: {sources_agreeing: 3, sources_total: 4}
+      genetics: {}
+      chemistry: {chembl_distinct_compounds: 312, max_phase: 1, chembl_pfam_class_collapse_fraction: 0.4}
+      expression: {}
+      reproducibility: {retracted: false, rebuttals_count: 0, independent_replications: 8}
+      selectivity:
+        selectivity_data: true
+        off_targets_in_indication_relevant_tissue: true
+        selectivity_index_log: -0.3
+
+  - id: CETP_LDL
+    category: edge_case
+    expected_verdict: FALSIFIED_WITH_CAVEATS
+    claim:
+      target_symbol: CETP
+      uniprot_id: P11597
+      indication: cardiovascular disease
+      mechanism: "Inhibition raises HDL-C and was hypothesized to reduce CV events."
+      claim_type: validated_mechanism
+    fixture:
+      orthology: {sources_agreeing: 4, sources_total: 4}
+      genetics: {gwas_hits: 6, clinical_outcome_contested: true}
+      chemistry: {chembl_distinct_compounds: 487, max_phase: 3}
+      expression: {target_tissue_expressed: true}
+      reproducibility: {retracted: false, rebuttals_count: 0, independent_replications: 30}
+      selectivity: {selectivity_data: true, off_targets_in_indication_relevant_tissue: false}
+
+  - id: TEX10_ORTHOLOGY_THRESHOLD
+    category: edge_case
+    expected_verdict: FALSIFIED_WITH_CAVEATS
+    claim:
+      target_symbol: TEX10_Ipi1_orthology
+      uniprot_id: Q9NXC2
+      indication: madurella mycetoma (M7 selectivity question)
+      mechanism: "Ipi1 is a novel antifungal target; selectivity vs TEX10 is the open question."
+      claim_type: novel_target
+    fixture:
+      orthology: {sources_agreeing: 2, sources_total: 4, ortholog_count_human_pathogen: 1}
+      genetics: {}
+      chemistry: {chembl_distinct_compounds: 0}
+      expression: {}
+      reproducibility: {retracted: false, rebuttals_count: 0}
+      selectivity: {selectivity_data: false}
+
+  - id: NOVEL_TARGET_SELECTIVITY_GAP
+    category: edge_case_v1_1
+    expected_verdict: FALSIFIED_WITH_CAVEATS
+    notes: >
+      Added in v1.1.0. Exercises the R7 upgrade: a novel-target claim
+      with majority-orthology agreement but NO selectivity data should
+      still receive a substantive caveat from R7 (not just ABSTAINED).
+      Distinct from TEX10_ORTHOLOGY_THRESHOLD because here orthology
+      agreement is the majority case (3/4) so R1 stays clean - R7 is
+      the sole substantive contributor.
+    claim:
+      target_symbol: SyntheticNovelTarget_v1_1
+      uniprot_id: null
+      indication: "synthetic pathogen indication"
+      mechanism: "Novel target with sufficient orthology agreement but no selectivity data."
+      claim_type: novel_target
+    fixture:
+      orthology: {sources_agreeing: 3, sources_total: 4}
+      genetics: {}
+      chemistry: {chembl_distinct_compounds: 0}
+      expression: {target_tissue_expressed: true}
+      reproducibility: {retracted: false, rebuttals_count: 0, independent_replications: 0}
+      selectivity: {selectivity_data: false}

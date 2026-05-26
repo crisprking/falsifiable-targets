@@ -1,0 +1,128 @@
+{
+  "schema_version": "1.0",
+  "audit_timestamp_utc": "2026-05-26T09:44:47.341737+00:00",
+  "ruleset_version": "1.1.0",
+  "ruleset_sha256": "2f9aab7d0ebc209f62c16eb35be31bc5b65fa2eb09adc02bea5bff5176269b32",
+  "claim": {
+    "target_symbol": "TYK2",
+    "uniprot_id": "P29597",
+    "indication": "Psoriasis (plaque psoriasis, moderate-to-severe)",
+    "claim_type": "validated_mechanism",
+    "claim_sha256": "b663fa07cb1038ac1d62e41d112e9464ec7e991a23b4717b3e068d93b4a5d0ef"
+  },
+  "verdict": "SURVIVED",
+  "score": 0.0,
+  "cheapest_falsification": null,
+  "per_rule": [
+    {
+      "rule_id": "R1_orthology",
+      "status": "not_applicable",
+      "confidence": 0.0,
+      "input_data": {},
+      "evidence": {},
+      "falsification_tier": null,
+      "falsification_experiment": null,
+      "caveats": []
+    },
+    {
+      "rule_id": "R2_chemistry_support",
+      "status": "passed",
+      "confidence": 0.9,
+      "input_data": {
+        "chembl_distinct_compounds": 538,
+        "chembl_target_id": "CHEMBL3553"
+      },
+      "evidence": {
+        "chembl_distinct_compounds": 538
+      },
+      "falsification_tier": null,
+      "falsification_experiment": null,
+      "caveats": []
+    },
+    {
+      "rule_id": "R3_genetics_support",
+      "status": "passed",
+      "confidence": 0.85,
+      "input_data": {
+        "gwas_hits": 24,
+        "loss_of_function_phenotype": "partial LoF variants (P1104A) protective against psoriasis; complete LoF causes hyper-IgE syndrome",
+        "mendelian_evidence": true,
+        "clinical_outcome_contested": false
+      },
+      "evidence": {
+        "gwas_hits": 24,
+        "loss_of_function_phenotype": "partial LoF variants (P1104A) protective against psoriasis; complete LoF causes hyper-IgE syndrome",
+        "mendelian_evidence": true,
+        "clinical_outcome_contested": false
+      },
+      "falsification_tier": null,
+      "falsification_experiment": null,
+      "caveats": []
+    },
+    {
+      "rule_id": "R4_expression",
+      "status": "passed",
+      "confidence": 0.8,
+      "input_data": {
+        "target_tissue_expressed": true,
+        "uniprot_tissue_text": "Observed in all cell lines analyzed. Expressed in a variety of lymphoid and non-lymphoid cell lines"
+      },
+      "evidence": {
+        "target_tissue_expressed": true,
+        "uniprot_tissue_text": "Observed in all cell lines analyzed. Expressed in a variety of lymphoid and non-lymphoid cell lines"
+      },
+      "falsification_tier": null,
+      "falsification_experiment": null,
+      "caveats": []
+    },
+    {
+      "rule_id": "R5_replication",
+      "status": "passed",
+      "confidence": 0.9,
+      "input_data": {
+        "retracted": false,
+        "rebuttals_count": 0,
+        "independent_replications": 50
+      },
+      "evidence": {
+        "retracted": false,
+        "rebuttals_count": 0,
+        "independent_replications": 50
+      },
+      "falsification_tier": null,
+      "falsification_experiment": null,
+      "caveats": []
+    },
+    {
+      "rule_id": "R6_chemistry_class_collapse",
+      "status": "not_applicable",
+      "confidence": 0.0,
+      "input_data": {},
+      "evidence": {},
+      "falsification_tier": null,
+      "falsification_experiment": null,
+      "caveats": []
+    },
+    {
+      "rule_id": "R7_selectivity_counterscreen",
+      "status": "passed",
+      "confidence": 0.8,
+      "input_data": {
+        "selectivity_data": true,
+        "off_targets_in_indication_relevant_tissue": false,
+        "selectivity_index_log": 2.0
+      },
+      "evidence": {
+        "selectivity_data": true,
+        "off_targets_in_indication_relevant_tissue": false,
+        "selectivity_index_log": 2.0
+      },
+      "falsification_tier": null,
+      "falsification_experiment": null,
+      "caveats": []
+    }
+  ],
+  "substantive_caveat_count": 0,
+  "operational_note_count": 0,
+  "adapter_mode": "live+fixture composite"
+}

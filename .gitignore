@@ -1,0 +1,11 @@
+__pycache__/
+*.pyc
+.pytest_cache/
+.ae_cache/
+.ipynb_checkpoints/
+*.egg-info/
+.venv/
+.DS_Store
+
+# Backup files generated during development
+*_backup.py
