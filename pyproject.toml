@@ -76,19 +76,26 @@ ft-smoke = "smoke_test:main"
 ft-validate = "validate_claim:main"
 
 # -- setuptools-specific config -------------------------------------------
+#
+# v1.4.1 packaging fix:
+#   - sentinels/ and claims/ are now declared as packages so their YAML
+#     files ship in the wheel via package-data.
+#   - include-package-data=true honors MANIFEST.in for the sdist path.
+#
+# This solves the "FileNotFoundError: .../sentinels/v1_sentinels.yaml"
+# bug seen on clean installs (Kaggle, Colab, sandboxed CI).
 
 [tool.setuptools]
-# Flat layout: top-level py-modules plus the adapters subpackage.
-# Keeps backwards compatibility with existing imports
-# (`from smoke_test import ...`, `from adapters import ...`).
 py-modules = ["smoke_test", "run_audit", "validate_claim", "_version"]
+include-package-data = true
 
 [tool.setuptools.packages.find]
-include = ["adapters*"]
+include = ["adapters*", "sentinels*", "claims*"]
 
 [tool.setuptools.package-data]
-# Include the YAML data files that ship with the package
 adapters = ["*.yaml"]
+sentinels = ["*.yaml"]
+claims = ["*.yaml"]
 
 [tool.setuptools.dynamic]
 version = { attr = "_version.__version__" }

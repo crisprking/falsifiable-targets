@@ -1,5 +1,45 @@
 # Changelog
 
+
+## [1.4.1] - 2026-05-26 — Packaging hotfix
+
+**Hotfix release. No rule changes.** Fixes a packaging bug in v1.4.0 where
+`sentinels/v1_sentinels.yaml` and `claims/*.yaml` were not shipped with the
+wheel, causing `FileNotFoundError` on clean installs (Kaggle, Colab, fresh
+CI environments).
+
+Ruleset SHA: `35ef2b2ab5363298097962a0b6ae52c70d551a1edddc341054f75cb6e4fb7221` (unchanged from v1.4.0 / ruleset v1.2.0)
+Tests: 58 (unchanged)
+
+### Fixed
+
+- **Packaging: ship `sentinels/` and `claims/` YAML data files.** v1.4.0
+  declared `sentinels/` and `claims/` as data directories but they weren't
+  packages (no `__init__.py`), so setuptools silently dropped them from the
+  wheel. Result: `ft-smoke` and `ft-audit` failed at runtime with
+  `FileNotFoundError` on any non-editable install. Fixed by:
+  - Adding empty `sentinels/__init__.py` and `claims/__init__.py`
+  - Declaring both in `[tool.setuptools.packages.find].include`
+  - Adding `package-data` entries for each
+  - Adding a `MANIFEST.in` for the sdist path
+- This unblocks `pip install falsifiable-targets` (future PyPI release),
+  `pip install git+https://github.com/crisprking/falsifiable-targets.git`,
+  and `pip install ./falsifiable-targets-1.4.1.tar.gz`.
+
+### Notes
+
+- No rule logic was touched. The ruleset SHA is byte-identical to v1.4.0.
+- Editable installs (`pip install -e .`) worked in v1.4.0 because they
+  read directly from the working tree; only built distributions were
+  broken. This is why the bug wasn't caught earlier — local development
+  loops always used `-e .`.
+- Tests in `tests/test_portability.py` are extended in this release to
+  catch the same bug in the future: a new test installs into a temp
+  prefix and confirms the data files arrive at the expected site-packages
+  locations.
+
+
+
 All releases tag a git ref and stamp every audit produced under that release
 with a ruleset SHA. The SHA-stability test in `tests/test_sentinels.py`
 prevents silent drift; any rule-logic change must bump the ruleset version
