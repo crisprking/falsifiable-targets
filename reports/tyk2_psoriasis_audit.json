@@ -1,6 +1,11 @@
 {
-  "schema_version": "1.0",
-  "audit_timestamp_utc": "2026-05-26T10:04:56.784690+00:00",
+  "schema_version": "1.1",
+  "audit_timestamp_utc": "2026-05-26T10:34:37.399961+00:00",
+  "tool": {
+    "name": "falsifiable-targets",
+    "version": "1.4.0",
+    "python_version": "3.12.3"
+  },
   "ruleset_version": "1.2.0",
   "ruleset_sha256": "35ef2b2ab5363298097962a0b6ae52c70d551a1edddc341054f75cb6e4fb7221",
   "claim": {
@@ -10,6 +15,12 @@
     "claim_type": "validated_mechanism",
     "claim_sha256": "b663fa07cb1038ac1d62e41d112e9464ec7e991a23b4717b3e068d93b4a5d0ef"
   },
+  "adapter_inventory": [
+    {
+      "name": "FixtureAdapter",
+      "live": false
+    }
+  ],
   "verdict": "SURVIVED",
   "score": 0.0,
   "cheapest_falsification": null,
@@ -26,23 +37,20 @@
     },
     {
       "rule_id": "R2_chemistry_support",
-      "status": "passed",
-      "confidence": 0.9,
+      "status": "abstained",
+      "confidence": 0.0,
       "input_data": {
-        "chembl_distinct_compounds": 538,
-        "chembl_target_id": "CHEMBL3553",
-        "chembl_paralog_compound_counts": {
-          "JAK1": 549,
-          "JAK2": 772,
-          "JAK3": 832
-        }
+        "chembl_pfam_class_collapse_fraction": null
       },
-      "evidence": {
-        "chembl_distinct_compounds": 538
-      },
+      "evidence": {},
       "falsification_tier": null,
       "falsification_experiment": null,
-      "caveats": []
+      "caveats": [
+        {
+          "kind": "operational",
+          "text": "no chemistry data; rule abstains"
+        }
+      ]
     },
     {
       "rule_id": "R3_genetics_support",
@@ -69,12 +77,10 @@
       "status": "passed",
       "confidence": 0.8,
       "input_data": {
-        "target_tissue_expressed": true,
-        "uniprot_tissue_text": "Observed in all cell lines analyzed. Expressed in a variety of lymphoid and non-lymphoid cell lines"
+        "target_tissue_expressed": true
       },
       "evidence": {
-        "target_tissue_expressed": true,
-        "uniprot_tissue_text": "Observed in all cell lines analyzed. Expressed in a variety of lymphoid and non-lymphoid cell lines"
+        "target_tissue_expressed": true
       },
       "falsification_tier": null,
       "falsification_experiment": null,
@@ -100,23 +106,20 @@
     },
     {
       "rule_id": "R6_chemistry_class_collapse",
-      "status": "passed",
-      "confidence": 0.85,
+      "status": "not_applicable",
+      "confidence": 0.0,
       "input_data": {
-        "chembl_distinct_compounds": 538,
-        "chembl_target_id": "CHEMBL3553",
-        "chembl_paralog_compound_counts": {
-          "JAK1": 549,
-          "JAK2": 772,
-          "JAK3": 832
-        }
+        "chembl_pfam_class_collapse_fraction": null
       },
-      "evidence": {
-        "collapse_fraction": null
-      },
+      "evidence": {},
       "falsification_tier": null,
       "falsification_experiment": null,
-      "caveats": []
+      "caveats": [
+        {
+          "kind": "operational",
+          "text": "no chemistry to assess for class collapse; rule not applicable"
+        }
+      ]
     },
     {
       "rule_id": "R7_selectivity_counterscreen",
@@ -138,6 +141,6 @@
     }
   ],
   "substantive_caveat_count": 0,
-  "operational_note_count": 0,
-  "adapter_mode": "live+fixture composite"
+  "operational_note_count": 2,
+  "adapter_mode": "fixture-only"
 }

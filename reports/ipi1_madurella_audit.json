@@ -1,8 +1,13 @@
 {
-  "schema_version": "1.0",
-  "audit_timestamp_utc": "2026-05-26T09:44:29.293101+00:00",
-  "ruleset_version": "1.1.0",
-  "ruleset_sha256": "2f9aab7d0ebc209f62c16eb35be31bc5b65fa2eb09adc02bea5bff5176269b32",
+  "schema_version": "1.1",
+  "audit_timestamp_utc": "2026-05-26T10:34:32.385620+00:00",
+  "tool": {
+    "name": "falsifiable-targets",
+    "version": "1.4.0",
+    "python_version": "3.12.3"
+  },
+  "ruleset_version": "1.2.0",
+  "ruleset_sha256": "35ef2b2ab5363298097962a0b6ae52c70d551a1edddc341054f75cb6e4fb7221",
   "claim": {
     "target_symbol": "Ipi1 (KXX81897.1)",
     "uniprot_id": null,
@@ -10,6 +15,12 @@
     "claim_type": "novel_target",
     "claim_sha256": "88d27c702ba1fe5e805aeeb138a2b66b912ed94aeb44a5ff0772dfc6d158af75"
   },
+  "adapter_inventory": [
+    {
+      "name": "FixtureAdapter",
+      "live": false
+    }
+  ],
   "verdict": "FALSIFIED_WITH_CAVEATS",
   "score": 0.0,
   "cheapest_falsification": null,

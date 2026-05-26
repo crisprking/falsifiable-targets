@@ -1,19 +1,21 @@
 """Adapter tests - hermetic. No live network. Mock payloads cover the
 key UniProt and ChEMBL response shapes the adapters parse."""
-from pathlib import Path
 import sys
+from pathlib import Path
 
 import pytest
 
-ROOT = Path("/kaggle/working/falsifiable-targets")
+ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(ROOT))
 
 from adapters import (
-    FixtureAdapter, CompositeAdapter, UniProtAdapter, ChEMBLAdapter,
+    ChEMBLAdapter,
+    CompositeAdapter,
+    FixtureAdapter,
+    UniProtAdapter,
     default_composite,
 )
-from smoke_test import TargetClaim, ClaimType
-
+from smoke_test import ClaimType, TargetClaim
 
 # ---------------------------------------------------------------------------
 # Fixtures
@@ -203,7 +205,7 @@ class TestEngineWithLiveAdapter:
     rules see the merged data correctly. PCSK9 sentinel should still survive."""
 
     def test_pcsk9_survives_with_live_mock_adapter(self, pcsk9_claim):
-        from smoke_test import aggregate, RULES, RuleStatus
+        from smoke_test import RULES, RuleStatus, aggregate
         fixture = {
             "orthology": {"sources_agreeing": 4, "sources_total": 4},
             "genetics": {"gwas_hits": 18, "loss_of_function_phenotype": "lifelong low LDL", "mendelian_evidence": True},

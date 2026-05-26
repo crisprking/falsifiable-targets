@@ -508,7 +508,12 @@ def main():
     print(f"\nSentinel suite: {passes}/{total} passed\n")
     print("\n".join(lines))
     if fails == 0:
-        print("\n*** v1.1.0 IS SHIPPABLE - sentinel calibration passes ***")
+        # Read version from single source of truth
+        try:
+            from _version import RULESET_VERSION
+        except ImportError:
+            RULESET_VERSION = "unknown"
+        print(f"\n*** Ruleset v{RULESET_VERSION} IS SHIPPABLE - sentinel calibration passes ***")
         return 0
     print(f"\n*** {fails} sentinel(s) failed ***")
     return 1

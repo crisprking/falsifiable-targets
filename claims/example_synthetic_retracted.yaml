@@ -1,0 +1,49 @@
+# Example claim: synthetic FALSIFIED case
+#
+# A synthetic example showing what a claim looks like that the framework
+# falsifies outright. Inspired by the STAP-cells retraction (2014).
+#
+# Expected verdict: FALSIFIED (one rule kills it cheaply at R5)
+#
+# Purpose: demonstrate that R5_replication catches retracted primary
+# sources before more expensive evidence-axes are even consulted.
+
+claim:
+  target_symbol: "SYNTHETIC_TARGET_X"
+  uniprot_id: null
+  indication: "(synthetic example - not a real claim)"
+  mechanism: |
+    Synthetic example for documentation. A claim relying on a primary
+    source that has been retracted. The mechanism narrative is omitted
+    because the point is that R5 should kill this regardless of
+    mechanism quality.
+  claim_type: novel_target
+  notes: |
+    This is an illustrative example, NOT a real target claim. It exists
+    to show contributors what a FALSIFIED-via-R5 result looks like and
+    how the audit JSON encodes a cheapest-falsification at the
+    public_data_lookup tier.
+  author: "example - falsifiable-targets v1.4.0"
+  date: "2026-05-26"
+
+fixture:
+  # Orthology: irrelevant — R5 will kill before R1 even matters.
+  orthology:
+    sources_agreeing: 3
+    sources_total: 4
+
+  # Chemistry: irrelevant for this example.
+  chemistry:
+    chembl_distinct_compounds: 0
+
+  # R5 — the load-bearing failure mode. Primary source is retracted;
+  # the framework treats this as overwhelming.
+  reproducibility:
+    independent_replications: 0
+    retracted: true       # <-- this is the cheapest-tier falsifier
+    pubpeer_serious_concerns: true
+
+  # No selectivity data, no genetics, no expression. Doesn't matter —
+  # R5 falsifies with public_data_lookup confidence ~0.99.
+  selectivity:
+    selectivity_data: false

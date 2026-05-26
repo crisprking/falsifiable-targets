@@ -10,16 +10,15 @@ returns SURVIVED. The live-mode TYK2 audit (with paralog map loaded)
 is expected to fire the R6 substantive caveat; that's exercised in
 the heuristic-path test below using a synthetic fixture.
 """
-from pathlib import Path
 import sys
+from pathlib import Path
 
-import pytest
 import yaml
 
-ROOT = Path("/kaggle/working/falsifiable-targets")
+ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(ROOT))
 
-from smoke_test import TargetClaim, ClaimType, Verdict, run_audit, RuleStatus
+from smoke_test import ClaimType, TargetClaim, Verdict, run_audit
 
 
 def test_tyk2_audit_survives_under_v1_2_0_fixture_only():

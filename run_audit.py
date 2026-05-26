@@ -69,8 +69,8 @@ def main():
         os.environ["AE_OFFLINE"] = "1"
 
     # Local imports so the env var is set before adapter import
-    from smoke_test import TargetClaim, ClaimType, RULES, RuleStatus, run_audit, aggregate
-    from adapters import default_composite, FixtureAdapter, load_paralog_map
+    from adapters import FixtureAdapter, default_composite, load_paralog_map
+    from smoke_test import RULES, ClaimType, RuleStatus, TargetClaim, aggregate
 
     claim_path = Path(args.claim_path)
     with open(claim_path) as f:
@@ -144,7 +144,7 @@ def main():
         print(f"Cheapest falsification: {cheapest[2]} @ {cheapest[1].value}")
         print(f"  Experiment: {cheapest[0]}")
 
-    print(f"\nPer-rule results:")
+    print("\nPer-rule results:")
     for r in results:
         status_str = r.status.value.upper().ljust(15)
         print(f"  {r.rule_id:35} {status_str} conf={r.confidence}")
@@ -168,9 +168,33 @@ def main():
         print(f"  - [{cav.rule_id}] {cav.text}")
 
     # JSON report
+    # Build adapter inventory for reproducibility metadata
+    if isinstance(adapter, FixtureAdapter):
+        adapter_inventory = [{"name": "FixtureAdapter", "live": False}]
+    else:
+        # CompositeAdapter case: list its constituent adapters
+        adapter_inventory = []
+        for sub in getattr(adapter, "_adapters", [adapter]):
+            adapter_inventory.append({
+                "name": type(sub).__name__,
+                "live": not isinstance(sub, FixtureAdapter),
+            })
+
+    # Tool version (single source of truth)
+    try:
+        from _version import __version__ as tool_version
+    except ImportError:
+        tool_version = "unknown"
+    import platform
+
     report = {
-        "schema_version": "1.0",
+        "schema_version": "1.1",
         "audit_timestamp_utc": audit_ts,
+        "tool": {
+            "name": "falsifiable-targets",
+            "version": tool_version,
+            "python_version": platform.python_version(),
+        },
         "ruleset_version": "1.2.0",
         "ruleset_sha256": ruleset_sha,
         "claim": {
@@ -180,6 +204,7 @@ def main():
             "claim_type": claim.claim_type.value,
             "claim_sha256": claim_sha,
         },
+        "adapter_inventory": adapter_inventory,
         "verdict": verdict.value,
         "score": score,
         "cheapest_falsification": (

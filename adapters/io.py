@@ -24,7 +24,6 @@ import urllib.parse
 import urllib.request
 from pathlib import Path
 
-
 CACHE_DIR = Path(os.environ.get("AE_CACHE_DIR", ".ae_cache"))
 
 
@@ -97,13 +96,12 @@ def _http_get_json(url, timeout=15, retries=2):
             cache_path.unlink()  # Corrupted; refetch
 
     CACHE_DIR.mkdir(parents=True, exist_ok=True)
-    last_err = None
     for attempt in range(retries + 1):
         try:
             req = urllib.request.Request(
                 url,
                 headers={
-                    "User-Agent": "falsifiable-targets/1.0.1",
+                    "User-Agent": "falsifiable-targets/1.4.0",
                     "Accept": "application/json",
                 },
             )
@@ -111,8 +109,8 @@ def _http_get_json(url, timeout=15, retries=2):
                 data = json.loads(resp.read().decode("utf-8"))
             cache_path.write_text(json.dumps(data))
             return data
-        except (urllib.error.URLError, urllib.error.HTTPError, TimeoutError) as e:
-            last_err = e
+        except (urllib.error.URLError, urllib.error.HTTPError, TimeoutError):
+            # Swallow and retry with exponential backoff; final failure returns None.
             if attempt < retries:
                 time.sleep(1.5 ** attempt)
     return None
@@ -388,8 +386,9 @@ def load_paralog_map(path):
     """Load paralog_map.yaml. Returns a dict suitable for passing to
     ChEMBLAdapter(paralog_map=...) or default_composite(paralog_map=...).
     Returns {} if the path does not exist."""
-    import yaml
     from pathlib import Path
+
+    import yaml
     p = Path(path)
     if not p.exists():
         return {}

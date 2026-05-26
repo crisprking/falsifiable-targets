@@ -1,0 +1,52 @@
+# Example claim: synthetic novel-target with substantive caveats
+#
+# A synthetic example showing FALSIFIED_WITH_CAVEATS - the most
+# common real-world verdict for honest novel-target claims.
+#
+# Expected verdict: FALSIFIED_WITH_CAVEATS (R7 substantive caveat)
+#
+# Purpose: demonstrate that novel-target claims with no selectivity
+# data trigger R7's v1.1.0 substantive-caveat upgrade. This is the
+# canonical "you can't ship without a counter-screen" pattern.
+
+claim:
+  target_symbol: "EXAMPLE_NOVEL_KINASE"
+  uniprot_id: null
+  indication: "(synthetic example - illustrative only)"
+  mechanism: |
+    Synthetic example. A novel pathogen kinase target with strong
+    orthology support (clear human absence) but NO selectivity data
+    against the closest human paralog. Designed to show how R7 v1.1.0
+    converts the "no counter-screen" gap into a substantive caveat
+    rather than letting it pass quietly.
+  claim_type: novel_target
+  notes: |
+    This is an illustrative example, NOT a real target claim. It exists
+    to show contributors the canonical FALSIFIED_WITH_CAVEATS shape
+    for a novel target whose selectivity question is unresolved.
+  author: "example - falsifiable-targets v1.4.0"
+  date: "2026-05-26"
+
+fixture:
+  # R1: strong orthology agreement (3 of 4 - majority)
+  orthology:
+    sources_agreeing: 4
+    sources_total: 4
+
+  # R2: not chemistry-series, doesn't apply
+  chemistry:
+    chembl_distinct_compounds: 0
+
+  # R3: novel target, no human genetics applicable
+  # (R3 doesn't apply to novel_target)
+
+  # R5: no replication concerns
+  reproducibility:
+    independent_replications: 2
+    retracted: false
+    pubpeer_serious_concerns: false
+
+  # R7: THE load-bearing field. selectivity_data is False, so for a
+  # novel_target claim, R7 v1.1.0 emits a substantive caveat.
+  selectivity:
+    selectivity_data: false

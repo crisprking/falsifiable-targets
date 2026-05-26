@@ -1,14 +1,16 @@
 """Pytest sentinel suite - runs every sentinel as a parametrized test."""
-from pathlib import Path
 import sys
-import yaml
-import pytest
+from pathlib import Path
 
-ROOT = Path("/kaggle/working/falsifiable-targets")
+import pytest
+import yaml
+
+# Project root - computed from this file's location so the test suite runs
+# anywhere (a clone, a CI runner, /tmp, Kaggle, doesn't matter).
+ROOT = Path(__file__).resolve().parent.parent
 sys.path.insert(0, str(ROOT))
 
-from smoke_test import ClaimType, TargetClaim, Verdict, run_audit, RULES
-
+from smoke_test import RULES, ClaimType, TargetClaim, Verdict, run_audit
 
 # Locked v1.2.0 ruleset SHA. Computed from the canonical ASCII rule descriptions.
 RULESET_SHA_V1_2_0 = "35ef2b2ab5363298097962a0b6ae52c70d551a1edddc341054f75cb6e4fb7221"

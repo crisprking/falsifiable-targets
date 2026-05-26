@@ -5,6 +5,99 @@ with a ruleset SHA. The SHA-stability test in `tests/test_sentinels.py`
 prevents silent drift; any rule-logic change must bump the ruleset version
 and the corresponding lock value.
 
+## [1.4.0] - 2026-05-26 — Packaging, portability, the moat release
+
+**Infrastructure release. No rule changes.** This release turns the framework
+from "audit scripts on Kaggle" into "a tool other researchers can use."
+
+Ruleset SHA: `35ef2b2ab5363298097962a0b6ae52c70d551a1edddc341054f75cb6e4fb7221` (unchanged from v1.3.0 / ruleset v1.2.0)
+Tests: 58 (was 38; +4 portability, +16 schema-validation)
+
+### Added
+
+- **`pyproject.toml`** — modern PEP 621 packaging. Install with
+  `pip install -e ".[all]"`. Optional extras: `[validate]` (pydantic),
+  `[dev]` (pytest, ruff).
+- **CLI entry points**:
+  - `ft-audit claim.yaml [--no-live] [--json-out FILE]`
+  - `ft-smoke` — runs the sentinel calibration suite
+  - `ft-validate claim.yaml` — schema check before running an audit
+- **`validate_claim.py`** — pydantic-preferred schema validator with
+  manual fallback. Catches typos, missing required fields, unknown
+  claim types, malformed UniProt IDs, unknown fixture sections.
+- **`_version.py`** — single source of truth for tool version and
+  ruleset SHA. CI verifies the git tag matches.
+- **`adapters/protocol.py`** — `Adapter` Protocol (runtime_checkable)
+  documenting the contract for writing new data adapters. Built-in
+  adapters verified conforming.
+- **Worked example claims**:
+  - `claims/example_hmgcr_statin.yaml` — canonical SURVIVED
+  - `claims/example_synthetic_retracted.yaml` — canonical FALSIFIED via R5
+  - `claims/example_novel_caveats.yaml` — canonical FALSIFIED_WITH_CAVEATS
+- **`LICENSE`** — Apache License 2.0
+- **`CITATION.cff`** — GitHub-rendered "Cite this repository" metadata
+- **`CONTRIBUTING.md`** — full contribution guide: audits, sentinels,
+  rule-change RFC process, adapter writing
+- **`docs/WHY_THIS_TOOL.md`** — the moat doc: what makes the framework
+  different from a checklist
+- **`docs/ADAPTER_PROTOCOL.md`** — contributor guide for new adapters,
+  including canonical fixture field names per section
+- **`docs/CLAIM_SCHEMA.md`** — claim YAML field reference
+- **`tests/test_portability.py`** — 4 tests that catch hardcoded
+  machine-specific paths (`/kaggle/`, `/Users/foo/`) before they ship
+- **`tests/test_validation.py`** — 16 tests pinning the schema validator
+  against shipped claim files and sentinels
+- **`.github/workflows/ci.yml`** — matrix CI: Python 3.10/3.11/3.12 on
+  Ubuntu + Python 3.12 on macOS. Runs smoke + pytest + reproducibility
+  checks on every push. Lint via ruff. Tag/version consistency check
+  on release tags.
+
+### Fixed
+
+- **Critical portability bug**: `tests/test_sentinels.py`,
+  `tests/test_adapters.py`, `tests/test_tyk2_audit.py` had hardcoded
+  `/kaggle/working/falsifiable-targets` as the project root, causing
+  the test suite to fail on any non-Kaggle environment. All three now
+  use `Path(__file__).resolve().parent.parent`. The portability test
+  guarantees this regression cannot recur.
+- **Cosmetic**: `smoke_test.py` shipped banner now reads the ruleset
+  version from `_version.py` (was hardcoded "v1.1.0" through v1.3.x).
+- **Cosmetic**: unused `last_err` variable in `adapters/io.py`
+  retry loop, flagged by ruff.
+
+### Changed
+
+- **Audit JSON report schema bumped to v1.1** (was v1.0): now includes
+  `tool: {name, version, python_version}` and `adapter_inventory`.
+  Old v1.0 reports still parse; new audits stamp v1.1.
+- **`adapters/io.py`** User-Agent string updated to `falsifiable-targets/1.4.0`.
+
+### Verified
+
+Full local verification (mirrors what CI runs):
+- `python smoke_test.py` — 11/11 sentinels pass under ruleset v1.2.0
+- `python -m pytest tests/` — 58/58 tests pass (offline mode, AE_OFFLINE=1)
+- `ft-validate claims/*.yaml` — all shipped claim files validate
+- `ft-audit claims/example_hmgcr_statin.yaml --no-live` — SURVIVED
+- `ft-audit claims/example_synthetic_retracted.yaml --no-live` — FALSIFIED
+- `ft-audit claims/example_novel_caveats.yaml --no-live` — FALSIFIED_WITH_CAVEATS
+- `ft-audit claims/ipi1_madurella.yaml --no-live` — FALSIFIED_WITH_CAVEATS (2 substantive caveats)
+- `ft-audit claims/tyk2_psoriasis.yaml --no-live` — SURVIVED
+- `ruff check .` — clean
+
+### What this release does NOT do
+
+- No rule logic changes. Ruleset SHA stays locked at v1.2.0's value.
+- No new audits. The Ipi1 and TYK2 audits stand under v1.2.0 ruleset.
+- No live adapter behavior changes (the User-Agent string change is
+  cosmetic; cache keys are URL-based, not header-based).
+
+The next release (v1.5.0) is queued for substantive content changes:
+either R3 live Open Targets adapter, or v1.4 compound-level overlap
+work for R6 (the gap surfaced by the v1.3.0 TYK2 re-audit).
+
+---
+
 ## [1.3.1] - 2026-05-26 — v1.3.0 audit narrative + honest finding
 
 **Documentation release. No code changes. No rule changes.**
