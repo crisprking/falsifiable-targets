@@ -245,6 +245,12 @@ class ChEMBLAdapter:
                                               (Implemented as a lookup
                                               against an explicit table
                                               of known collapse cases.)
+        chembl_paralog_compound_counts - (v1.2.0, optional) dict mapping
+                                         paralog symbol to its ChEMBL
+                                         distinct-compound count. Used by
+                                         R6's paralog-ratio heuristic.
+                                         Populated only when paralog_map
+                                         is supplied.
 
     The class-collapse fraction is the load-bearing R6 input. The current
     implementation looks up the target's Pfam class and reports whether
@@ -253,8 +259,15 @@ class ChEMBLAdapter:
     SAT->HDAC4 archetype from the Madurella audit.
     """
 
-    def __init__(self, mock_data=None):
+    def __init__(self, mock_data=None, paralog_map=None):
+        """
+        mock_data: optional dict of mock responses for tests.
+        paralog_map: optional dict mapping primary UniProt -> list of
+                     paralog dicts with 'symbol' and 'uniprot_id' keys.
+                     Used to populate chembl_paralog_compound_counts.
+        """
         self._mock = mock_data
+        self._paralog_map = paralog_map or {}
 
     def _fetch_target(self, chembl_target_id):
         if self._mock is not None:
@@ -278,42 +291,71 @@ class ChEMBLAdapter:
         )
         return _http_get_json(url)
 
+    def _compound_count_for_uniprot(self, uniprot_id):
+        """Return (count, chembl_target_id, max_phase) for a UniProt ID,
+        or (None, None, None) if the live fetch failed, or (0, None, None)
+        if the API affirmatively reported no target."""
+        target_resp = self._fetch_target_by_uniprot(uniprot_id)
+        if target_resp is None:
+            return None, None, None
+        targets = target_resp.get("targets", []) or []
+        if not targets:
+            return 0, None, None
+        chembl_id = targets[0].get("target_chembl_id")
+        if not chembl_id:
+            return 0, None, None
+        acts = self._fetch_activities(chembl_id)
+        if acts is None:
+            return None, chembl_id, None
+        activities = acts.get("activities", []) or []
+        compound_ids = {a.get("molecule_chembl_id") for a in activities if a.get("molecule_chembl_id")}
+        max_phase_vals = [a.get("max_phase") for a in activities if a.get("max_phase") is not None]
+        max_phase = None
+        if max_phase_vals:
+            try:
+                max_phase = max(int(v) for v in max_phase_vals)
+            except (ValueError, TypeError):
+                pass
+        return len(compound_ids), chembl_id, max_phase
+
     def get(self, section, claim):
         if section != "chemistry":
             return {}
         uid = getattr(claim, "uniprot_id", None)
         if not uid:
             return {}
-        target_resp = self._fetch_target_by_uniprot(uid)
-        if target_resp is None:
+        n, chembl_id, max_phase = self._compound_count_for_uniprot(uid)
+        if n is None:
             # Live fetch failed (offline, network error, rate limit). Return
             # nothing so the composite falls back to fixture data rather
             # than asserting a misleading zero-count.
             return {}
-        targets = target_resp.get("targets", []) or []
-        if not targets:
-            # API responded affirmatively with zero targets - this is real
-            # data ("ChEMBL has no entry for this UniProt"), so report 0.
+        if chembl_id is None:
             return {"chembl_distinct_compounds": 0}
-        chembl_id = targets[0].get("target_chembl_id")
-        if not chembl_id:
-            return {"chembl_distinct_compounds": 0}
-        acts = self._fetch_activities(chembl_id)
-        if acts is None:
-            # Target found but activity fetch failed - composite falls back
-            return {"chembl_target_id": chembl_id}
-        activities = acts.get("activities", []) or []
-        compound_ids = {a.get("molecule_chembl_id") for a in activities if a.get("molecule_chembl_id")}
-        max_phase_vals = [a.get("max_phase") for a in activities if a.get("max_phase") is not None]
         out = {
-            "chembl_distinct_compounds": len(compound_ids),
+            "chembl_distinct_compounds": n,
             "chembl_target_id": chembl_id,
         }
-        if max_phase_vals:
-            try:
-                out["max_phase"] = max(int(v) for v in max_phase_vals)
-            except (ValueError, TypeError):
-                pass
+        if max_phase is not None:
+            out["max_phase"] = max_phase
+
+        # v1.2.0: paralog compound counts. Only fetched when this primary
+        # target has an entry in the paralog map. Each fetch is cached on
+        # disk so repeat audits are network-free.
+        paralog_entry = self._paralog_map.get(uid)
+        if paralog_entry:
+            counts = {}
+            for paralog in paralog_entry.get("paralogs", []):
+                p_uid = paralog.get("uniprot_id")
+                p_symbol = paralog.get("symbol")
+                if not p_uid or not p_symbol:
+                    continue
+                p_n, _, _ = self._compound_count_for_uniprot(p_uid)
+                if p_n is not None:
+                    counts[p_symbol] = p_n
+            if counts:
+                out["chembl_paralog_compound_counts"] = counts
+
         return out
 
 
@@ -321,18 +363,36 @@ class ChEMBLAdapter:
 # Convenience: build the default v1.0.1 composite for a given claim
 # ---------------------------------------------------------------------------
 
-def default_composite(fixture, use_live=True, uniprot_mock=None, chembl_mock=None):
+def default_composite(fixture, use_live=True, uniprot_mock=None, chembl_mock=None,
+                       paralog_map=None):
     """
-    Build the standard adapter stack for v1.0.1:
+    Build the standard adapter stack for v1.2.0:
         [live UniProt] -> [live ChEMBL] -> [fixture]
 
     If use_live=False, returns a fixture-only adapter (hermetic).
     If *_mock dicts are passed, the live adapters use those instead of HTTP.
+    If paralog_map is passed, ChEMBLAdapter will fetch paralog compound
+    counts for primary targets with entries in the map. The map is expected
+    to be the 'paralog_map' dict loaded from claims/paralog_map.yaml.
     """
     if not use_live:
         return FixtureAdapter(fixture)
     return CompositeAdapter([
         UniProtAdapter(mock_data=uniprot_mock),
-        ChEMBLAdapter(mock_data=chembl_mock),
+        ChEMBLAdapter(mock_data=chembl_mock, paralog_map=paralog_map),
         FixtureAdapter(fixture),
     ])
+
+
+def load_paralog_map(path):
+    """Load paralog_map.yaml. Returns a dict suitable for passing to
+    ChEMBLAdapter(paralog_map=...) or default_composite(paralog_map=...).
+    Returns {} if the path does not exist."""
+    import yaml
+    from pathlib import Path
+    p = Path(path)
+    if not p.exists():
+        return {}
+    with open(p) as f:
+        data = yaml.safe_load(f) or {}
+    return data.get("paralog_map", {}) or {}

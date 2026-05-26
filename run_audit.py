@@ -70,7 +70,7 @@ def main():
 
     # Local imports so the env var is set before adapter import
     from smoke_test import TargetClaim, ClaimType, RULES, RuleStatus, run_audit, aggregate
-    from adapters import default_composite, FixtureAdapter
+    from adapters import default_composite, FixtureAdapter, load_paralog_map
 
     claim_path = Path(args.claim_path)
     with open(claim_path) as f:
@@ -87,12 +87,16 @@ def main():
 
     fixture = spec.get("fixture", {})
 
+    # Load paralog map (used by ChEMBLAdapter for R6 v1.2.0+ heuristic)
+    paralog_map_path = claim_path.parent / "paralog_map.yaml"
+    paralog_map = load_paralog_map(paralog_map_path)
+
     # Build adapter
     if args.no_live:
         adapter = FixtureAdapter(fixture)
         adapter_mode = "fixture-only"
     else:
-        adapter = default_composite(fixture, use_live=True)
+        adapter = default_composite(fixture, use_live=True, paralog_map=paralog_map)
         adapter_mode = "live+fixture composite" + (" (offline cache)" if args.offline else "")
 
     # Walk rules manually so we can capture per-rule input data
@@ -121,7 +125,7 @@ def main():
     verdict, score, cheapest, substantive, operational = aggregate(results)
 
     # Compute deterministic stamps
-    ruleset_sha = _ruleset_sha(RULES, "1.1.0")
+    ruleset_sha = _ruleset_sha(RULES, "1.2.0")
     claim_sha = _claim_sha(claim)
     audit_ts = datetime.now(timezone.utc).isoformat()
 
@@ -130,7 +134,7 @@ def main():
     print(f"Audit: {claim.target_symbol}  [{claim.indication}]")
     print(f"Claim type: {claim.claim_type.value}")
     print(f"Adapter:    {adapter_mode}")
-    print(f"Ruleset:    v1.1.0  ({ruleset_sha[:16]}...)")
+    print(f"Ruleset:    v1.2.0  ({ruleset_sha[:16]}...)")
     print(f"Claim SHA:  {claim_sha[:16]}...")
     print(f"Timestamp:  {audit_ts}")
     print("=" * 72)
@@ -167,7 +171,7 @@ def main():
     report = {
         "schema_version": "1.0",
         "audit_timestamp_utc": audit_ts,
-        "ruleset_version": "1.1.0",
+        "ruleset_version": "1.2.0",
         "ruleset_sha256": ruleset_sha,
         "claim": {
             "target_symbol": claim.target_symbol,

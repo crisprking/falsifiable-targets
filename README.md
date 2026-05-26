@@ -14,29 +14,41 @@ mode, the CETP clinical-genetics gap. The seven rules are designed to
 detect those failure modes from public data alone, at the cheapest
 falsification tier available.
 
-## Headline result (v1.2.0)
+## Headline result (v1.3.0)
 
-Two audits have been run end-to-end:
+Three audits have been run end-to-end:
 
-| Claim | Type | Verdict | Substantive caveats |
-|---|---|---|---|
-| **Ipi1 / Madurella** (in-house novel antifungal target) | `novel_target` | `FALSIFIED_WITH_CAVEATS` | 2 (orthology contested, no selectivity data) |
-| **TYK2 / psoriasis** (deucravacitinib, FDA-approved 2022) | `validated_mechanism` | `SURVIVED` | 0 |
+| Claim | Type | Ruleset | Verdict | Substantive caveats |
+|---|---|---|---|---|
+| **Ipi1 / Madurella** (in-house novel antifungal target) | `novel_target` | v1.1.0 | `FALSIFIED_WITH_CAVEATS` | 2 (orthology contested, no selectivity data) |
+| **TYK2 / psoriasis** (deucravacitinib, FDA-approved 2022) | `validated_mechanism` | v1.1.0 | `SURVIVED` | 0 |
+| **TYK2 / psoriasis** (re-audit under expanded R6) | `validated_mechanism` | v1.2.0 | `SURVIVED` | 0 |
 
-These two audits use the same ruleset, the same SHA-locked rule logic, and
-the same engine. The framework's first action was to attach substantive
-caveats to its creator's own published headline target. The first external
-audit then cleanly passed a validated, approved mechanism. That asymmetry
-is the calibration finding.
+The Ipi1 vs TYK2 asymmetry is the calibration finding: same engine,
+same SHA-locked rule logic, different verdicts in the direction the
+structure of each claim predicts. The v1.3.0 TYK2 re-audit is
+qualitatively stronger than the v1.1.0 one — R6 now applies to
+`validated_mechanism` claims and was actually evaluated against live
+ChEMBL paralog data (TYK2: 538 compounds; JAK1: 549; JAK2: 772; JAK3:
+832; max ratio 1.55× < 2.0× threshold). The pan-JAK class-collapse
+risk that v1.2.x didn't even check is now structurally audited and
+returns no overshadow at the pool-size axis.
+
+The v1.3.0 TYK2 SURVIVED is *not* a clean bill of selectivity — see
+[`docs/AUDIT_TYK2_v1_3.md`](docs/AUDIT_TYK2_v1_3.md) for the honest
+distinction between *pool-size overshadow* (what R6 audits) and
+*compound-level overlap* (v1.4 milestone).
 
 ## Limitations
 
-Read [`docs/AUDIT_LIMITATIONS_v1_2.md`](docs/AUDIT_LIMITATIONS_v1_2.md)
-before drawing conclusions from any audit. For TYK2 specifically, only 2
-of 7 rules used live data; 3 used hand-encoded fixture values from
-primary literature; 2 were not applicable to the claim type. The
-`SURVIVED` verdict is correct under v1.1.0 rules but reflects a partial
-audit. v1.3.0 will expand live-data coverage and the scope of `R6`.
+Read [`docs/AUDIT_LIMITATIONS_v1_3.md`](docs/AUDIT_LIMITATIONS_v1_3.md)
+before drawing conclusions from any audit. For TYK2 specifically under
+v1.3.0, 3 of 6 applicable rules used live data; 3 used hand-encoded
+fixture values from primary literature. The v1.3.0 R6 closes the
+class-collapse scope gap from v1.2.x but operates on *pool-size
+overshadow*, not *compound-level overlap* — the deucravacitinib
+JH2-domain selectivity argument lives at the latter axis, which is
+queued for v1.4.
 
 ## Quick reproduce
 
@@ -54,10 +66,10 @@ live and caches responses under `.ae_cache/`.
 
 ## Reproducing the audits exactly
 
-The v1.1.0 ruleset SHA is locked at:
+The v1.2.0 ruleset SHA is locked at:
 
 ```
-2f9aab7d0ebc209f62c16eb35be31bc5b65fa2eb09adc02bea5bff5176269b32
+35ef2b2ab5363298097962a0b6ae52c70d551a1edddc341054f75cb6e4fb7221
 ```
 
 Every audit report (`reports/*.json`) stamps this SHA alongside the
@@ -74,12 +86,14 @@ See [`CHANGELOG.md`](CHANGELOG.md). Brief summary:
 - **v1.0.1** - live UniProt + ChEMBL adapters added, ruleset unchanged
 - **v1.1.0** - R7 substantive-caveat upgrade for novel-target claims; new sentinel; new ruleset SHA
 - **v1.2.0** - first external audit (TYK2 / psoriasis); CLI runner; adapter bug fix
-- **v1.2.1** - documentation release (this one); public artifact; no code changes
+- **v1.2.1** - documentation release; public artifact; no code changes
+- **v1.3.0** - R6 scope expansion to validated_mechanism + paralog-ratio heuristic; new ruleset SHA; new sentinel; TYK2 expected to shift to FALSIFIED_WITH_CAVEATS under live mode
 
 ## Audits
 
 - [`docs/AUDIT_IPI1_v1_1.md`](docs/AUDIT_IPI1_v1_1.md) - inaugural self-audit, ruleset v1.1.0
 - [`docs/AUDIT_TYK2_v1_2.md`](docs/AUDIT_TYK2_v1_2.md) - first external audit, ruleset v1.1.0
+- [`docs/AUDIT_TYK2_v1_3.md`](docs/AUDIT_TYK2_v1_3.md) - TYK2 re-audit under v1.2.0 (R6 scope expanded; verdict unchanged but evidence strictly deeper)
 - [`reports/`](reports/) - JSON artifacts (machine-readable, SHA-stamped)
 
 ## The seven rules at a glance

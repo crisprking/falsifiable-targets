@@ -1,8 +1,8 @@
 {
   "schema_version": "1.0",
-  "audit_timestamp_utc": "2026-05-26T09:44:47.341737+00:00",
-  "ruleset_version": "1.1.0",
-  "ruleset_sha256": "2f9aab7d0ebc209f62c16eb35be31bc5b65fa2eb09adc02bea5bff5176269b32",
+  "audit_timestamp_utc": "2026-05-26T10:04:56.784690+00:00",
+  "ruleset_version": "1.2.0",
+  "ruleset_sha256": "35ef2b2ab5363298097962a0b6ae52c70d551a1edddc341054f75cb6e4fb7221",
   "claim": {
     "target_symbol": "TYK2",
     "uniprot_id": "P29597",
@@ -30,7 +30,12 @@
       "confidence": 0.9,
       "input_data": {
         "chembl_distinct_compounds": 538,
-        "chembl_target_id": "CHEMBL3553"
+        "chembl_target_id": "CHEMBL3553",
+        "chembl_paralog_compound_counts": {
+          "JAK1": 549,
+          "JAK2": 772,
+          "JAK3": 832
+        }
       },
       "evidence": {
         "chembl_distinct_compounds": 538
@@ -95,10 +100,20 @@
     },
     {
       "rule_id": "R6_chemistry_class_collapse",
-      "status": "not_applicable",
-      "confidence": 0.0,
-      "input_data": {},
-      "evidence": {},
+      "status": "passed",
+      "confidence": 0.85,
+      "input_data": {
+        "chembl_distinct_compounds": 538,
+        "chembl_target_id": "CHEMBL3553",
+        "chembl_paralog_compound_counts": {
+          "JAK1": 549,
+          "JAK2": 772,
+          "JAK3": 832
+        }
+      },
+      "evidence": {
+        "collapse_fraction": null
+      },
       "falsification_tier": null,
       "falsification_experiment": null,
       "caveats": []

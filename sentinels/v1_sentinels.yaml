@@ -185,3 +185,38 @@ sentinels:
       expression: {target_tissue_expressed: true}
       reproducibility: {retracted: false, rebuttals_count: 0, independent_replications: 0}
       selectivity: {selectivity_data: false}
+
+  - id: KINASE_CLASS_COLLAPSE_VALIDATED
+    category: edge_case_v1_2
+    expected_verdict: FALSIFIED_WITH_CAVEATS
+    notes: >
+      Added in v1.2.0. Exercises the R6 scope expansion: a
+      validated_mechanism claim where ChEMBL paralog chemistry pools
+      dwarf the primary's. Tests the new heuristic caveat path
+      (max_paralog_ratio >= 2.0). Synthetic kinase example: primary
+      has 500 compounds, paralog has 2500 (5x), which should fire the
+      paralog-overshadow substantive caveat.
+    claim:
+      target_symbol: SyntheticKinase_v1_2
+      uniprot_id: P00000
+      indication: "synthetic kinase indication"
+      mechanism: "Validated kinase target with high paralog chemistry overshadow."
+      claim_type: validated_mechanism
+    fixture:
+      orthology: {sources_agreeing: 4, sources_total: 4}
+      genetics:
+        gwas_hits: 10
+        loss_of_function_phenotype: "knockout phenotype"
+        mendelian_evidence: true
+      chemistry:
+        chembl_distinct_compounds: 500
+        max_phase: 4
+        chembl_paralog_compound_counts:
+          paralog_A: 2500
+          paralog_B: 1200
+      expression: {target_tissue_expressed: true}
+      reproducibility: {retracted: false, rebuttals_count: 0, independent_replications: 25}
+      selectivity:
+        selectivity_data: true
+        off_targets_in_indication_relevant_tissue: false
+        selectivity_index_log: 2.0

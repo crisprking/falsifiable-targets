@@ -5,6 +5,78 @@ with a ruleset SHA. The SHA-stability test in `tests/test_sentinels.py`
 prevents silent drift; any rule-logic change must bump the ruleset version
 and the corresponding lock value.
 
+## [1.3.1] - 2026-05-26 — v1.3.0 audit narrative + honest finding
+
+**Documentation release. No code changes. No rule changes.**
+
+Ruleset SHA: `35ef2b2ab5363298097962a0b6ae52c70d551a1edddc341054f75cb6e4fb7221` (unchanged from v1.3.0 / ruleset v1.2.0)
+Tests: 38 (unchanged from v1.3.0)
+
+Added:
+
+- `docs/AUDIT_TYK2_v1_3.md` — narrative for the TYK2 re-audit under expanded R6
+- `docs/AUDIT_LIMITATIONS_v1_3.md` — updated limitations doc; R6 scope gap from v1.2.x is closed; new gap (compound-level overlap vs pool-size overshadow) is named
+
+**Calibration finding from the v1.3.0 TYK2 re-audit:**
+
+A prediction was published in the v1.3.0 release notes: TYK2 would
+likely shift from `SURVIVED` to `FALSIFIED_WITH_CAVEATS` because the
+JAK family chemistry pools were assumed to dwarf TYK2's by ≥ 2×.
+**The prediction was wrong.** Live ChEMBL data showed:
+
+| Kinase | Distinct compounds |
+|---|---|
+| TYK2 (primary) | 538 |
+| JAK1 (paralog) | 549 |
+| JAK2 (paralog) | 772 |
+| JAK3 (paralog) | 832 |
+
+Maximum paralog/primary ratio: **1.55×**. Below the heuristic
+threshold of 2.0×. R6 returns PASSED without caveat.
+
+The honest interpretation, written in [`docs/AUDIT_TYK2_v1_3.md`](docs/AUDIT_TYK2_v1_3.md):
+TYK2 cleared the heuristic at the pool-size axis. R6 v1.2.0 measures
+pool-size overshadow, not compound-level overlap. The pan-JAK selectivity
+concern that deucravacitinib's JH2-domain mechanism resolves operates at
+the latter axis, which is a v1.4+ feature. The v1.3.0 SURVIVED is
+qualitatively stronger than the v1.1.0 SURVIVED — R6 was actually
+evaluated against live paralog data instead of returning NOT_APPLICABLE.
+
+No threshold adjustment was made after seeing the result. Lowering the
+threshold to "force" R6 to fire would be motivated reasoning of exactly
+the kind the framework is supposed to prevent.
+
+## [1.3.0] - 2026-05-26 — R6 scope expansion + paralog-ratio heuristic
+
+**Ruleset change. New SHA lock.**
+
+Ruleset SHA: `35ef2b2ab5363298097962a0b6ae52c70d551a1edddc341054f75cb6e4fb7221` (new, v1.2.0 ruleset)
+Previous SHA: `2f9aab7d0ebc209f62c16eb35be31bc5b65fa2eb09adc02bea5bff5176269b32` (v1.1.0)
+Tests: 38
+
+Changed:
+
+- **R6_chemistry_class_collapse** version bumped from 1.0.0 to 1.2.0. Two changes: (1) scope expanded to `validated_mechanism` claims (previously only `novel_target` and `chemistry_series`), and (2) new heuristic substantive-caveat path: when `chembl_paralog_compound_counts` is populated and any paralog has >= 2x the primary's compound count, R6 emits a substantive caveat naming the overshadow. The existing exact-fraction falsification path (>= 0.80) is preserved. Rationale: the pan-class selectivity question (canonical example: pan-JAK overlap for TYK2) is exactly the structural risk R6 was written to catch.
+
+Added:
+
+- `claims/paralog_map.yaml` — manually curated paralog map keyed by primary UniProt accession. Initial entries: P29597 (TYK2) → JAK1/JAK2/JAK3. PCSK9 and TNF intentionally omitted with rationale notes.
+- `ChEMBLAdapter.__init__` now accepts a `paralog_map` parameter. When supplied and the claim's UniProt accession has an entry, the adapter fetches compound counts for each paralog and attaches them to the chemistry section as `chembl_paralog_compound_counts`.
+- `adapters.load_paralog_map(path)` — convenience loader for paralog_map.yaml.
+- `run_audit.py` automatically loads `claims/paralog_map.yaml` (if present) and passes it to the live composite adapter.
+- Sentinel `KINASE_CLASS_COLLAPSE_VALIDATED` exercising the new heuristic path directly. Predicts `FALSIFIED_WITH_CAVEATS` for a synthetic validated-mechanism claim with paralog pool 5x primary.
+- Four new tests in `tests/test_tyk2_audit.py` and four new paralog-map tests in `tests/test_adapters.py`.
+
+Compatibility:
+
+- Existing v1.1.0 sentinels all still pass with unchanged verdicts. The R6 changes are strictly additive: the heuristic path only fires when `chembl_paralog_compound_counts` is present in the chemistry section, which v1.1.0 fixtures never supplied.
+- The TYK2 fixture-only test under v1.2.0 still returns SURVIVED (no paralog counts in fixture). The live-mode TYK2 audit on Kaggle is expected to now fire the R6 substantive caveat — that's the v1.3.0 calibration finding.
+
+Impact on existing audits (verdict shape comparison):
+
+- **Ipi1** under v1.2.0 ruleset: unchanged. `FALSIFIED_WITH_CAVEATS`, 2 substantive caveats (R1 + R7). No paralog map entry for Ipi1.
+- **TYK2** under v1.2.0 ruleset, live mode: expected to shift from `SURVIVED` (v1.1.0) to `FALSIFIED_WITH_CAVEATS` because the JAK family paralog chemistry pool dwarfs TYK2's. This is a real finding: the framework now catches the pan-JAK selectivity concern that v1.2.x missed. The deucravacitinib defense (JH2-domain binding) is a *structural narrative* not encoded in any rule input; the v1.2.0 caveat reads honestly that the heuristic flags the risk and structural support is required.
+
 ## [1.2.1] - 2026-05-25 — Public artifact
 
 **Documentation release. No code changes. No rule changes.**

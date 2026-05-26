@@ -282,16 +282,28 @@ class R5_Replication:
 
 class R6_ChemistryClassCollapse:
     rule_id = "R6_chemistry_class_collapse"
-    version = "1.0.0"
+    version = "1.2.0"
     description = (
         "If ChEMBL hits for the claimed target collapse onto a single human "
         "Pfam class (e.g. >=80% are inhibitors of a known human paralog), the "
         "chemistry evidence is phantom - it's evidence for the paralog, not "
-        "the claimed target. This is the SAT->HDAC4 archetype from the Madurella audit."
+        "the claimed target. This is the SAT->HDAC4 archetype from the Madurella audit. "
+        "v1.2.0 upgrade: scope expanded to validated_mechanism claims, because "
+        "the pan-class selectivity question (canonical example: pan-JAK overlap "
+        "for TYK2) is exactly the structural risk this rule was written to catch. "
+        "In addition to the existing exact-fraction falsification path, v1.2.0 "
+        "adds a heuristic substantive caveat when the paralog ChEMBL compound "
+        "pool is >= 2x the primary target's: a chemistry community that has "
+        "invested more in the paralogs than in the primary is unlikely to have "
+        "produced a class-selective story without explicit structural justification."
     )
 
     def applies_to(self, claim):
-        return claim.claim_type in (ClaimType.NOVEL_TARGET, ClaimType.CHEMISTRY_SERIES)
+        return claim.claim_type in (
+            ClaimType.NOVEL_TARGET,
+            ClaimType.CHEMISTRY_SERIES,
+            ClaimType.VALIDATED_MECHANISM,
+        )
 
     def evaluate(self, claim, io):
         d = io.get("chemistry", claim)
@@ -301,9 +313,12 @@ class R6_ChemistryClassCollapse:
                 caveats=[Caveat(CaveatKind.OPERATIONAL, self.rule_id,
                                 "no chemistry to assess for class collapse; rule not applicable")],
             )
-        fraction = d.get("chembl_pfam_class_collapse_fraction", 0.0) or 0.0
+
+        # Path 1: exact class-collapse fraction (when available, e.g. via
+        # explicit compound-level join). Unchanged from v1.0.0.
+        fraction = d.get("chembl_pfam_class_collapse_fraction", None)
         target = d.get("chembl_pfam_class_collapse_target_symbol", "<unknown>")
-        if fraction >= 0.80:
+        if fraction is not None and fraction >= 0.80:
             pct = f"{fraction:.0%}"
             return RuleResult(
                 self.rule_id, RuleStatus.FALSIFIED, 0.95,
@@ -311,6 +326,36 @@ class R6_ChemistryClassCollapse:
                 f"Group ChEMBL hits by Pfam class. {pct} are {target} inhibitors - the chemistry support for {claim.target_symbol} is class-collapsed phantom evidence.",
                 {"collapse_fraction": fraction, "collapse_target": target},
             )
+
+        # Path 2 (v1.2.0): paralog-ratio heuristic. If the paralog chemistry
+        # pool dwarfs the primary's, the class is much more likely to be a
+        # paralog story than a selective primary story. Threshold 2.0 is a
+        # heuristic, not a join.
+        primary_n = d.get("chembl_distinct_compounds", 0) or 0
+        paralog_counts = d.get("chembl_paralog_compound_counts", None)
+        if paralog_counts and primary_n > 0:
+            # paralog_counts is a dict {paralog_symbol: count}
+            max_paralog = max(paralog_counts.values()) if paralog_counts else 0
+            if max_paralog >= 2 * primary_n:
+                # Find which paralog has the largest pool
+                top_paralog = max(paralog_counts.items(), key=lambda x: x[1])
+                ratio = max_paralog / primary_n
+                return RuleResult(
+                    self.rule_id, RuleStatus.PASSED, 0.5,
+                    caveats=[Caveat(
+                        CaveatKind.SUBSTANTIVE, self.rule_id,
+                        f"paralog chemistry pool ({top_paralog[0]}: {top_paralog[1]} compounds) "
+                        f"is {ratio:.1f}x the primary target's ({primary_n} compounds); class-collapse "
+                        f"risk is structural and the selectivity narrative needs explicit support "
+                        f"(e.g. distinct binding mode, allosteric site). Heuristic flag, not falsification."
+                    )],
+                    evidence={
+                        "primary_compounds": primary_n,
+                        "paralog_compound_counts": paralog_counts,
+                        "max_paralog_ratio": ratio,
+                    },
+                )
+
         return RuleResult(self.rule_id, RuleStatus.PASSED, 0.85,
                           evidence={"collapse_fraction": fraction})
 

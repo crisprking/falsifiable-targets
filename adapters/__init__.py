@@ -5,6 +5,7 @@ from .io import (
     UniProtAdapter,
     ChEMBLAdapter,
     default_composite,
+    load_paralog_map,
 )
 
 __all__ = [
@@ -13,4 +14,5 @@ __all__ = [
     "UniProtAdapter",
     "ChEMBLAdapter",
     "default_composite",
+    "load_paralog_map",
 ]

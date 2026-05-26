@@ -10,8 +10,8 @@ sys.path.insert(0, str(ROOT))
 from smoke_test import ClaimType, TargetClaim, Verdict, run_audit, RULES
 
 
-# Locked v1.1.0 ruleset SHA. Computed from the canonical ASCII rule descriptions.
-RULESET_SHA_V1_1_0 = "2f9aab7d0ebc209f62c16eb35be31bc5b65fa2eb09adc02bea5bff5176269b32"
+# Locked v1.2.0 ruleset SHA. Computed from the canonical ASCII rule descriptions.
+RULESET_SHA_V1_2_0 = "35ef2b2ab5363298097962a0b6ae52c70d551a1edddc341054f75cb6e4fb7221"
 
 
 def _load_sentinels():
@@ -38,11 +38,11 @@ def test_sentinel(sentinel):
 
 
 def test_ruleset_sha_stable():
-    """Locks the v1.1.0 ruleset hash. Any rule change must bump the version."""
+    """Locks the v1.2.0 ruleset hash. Any rule change must bump the version."""
     import hashlib
     import json
     descriptor = {
-        "version": "1.1.0",
+        "version": "1.2.0",
         "rules": [
             {"rule_id": r.rule_id, "version": r.version, "description": r.description}
             for r in sorted(RULES, key=lambda x: x.rule_id)
@@ -50,7 +50,7 @@ def test_ruleset_sha_stable():
     }
     canon = json.dumps(descriptor, sort_keys=True, separators=(",", ":"))
     sha = hashlib.sha256(canon.encode()).hexdigest()
-    assert sha == RULESET_SHA_V1_1_0, (
+    assert sha == RULESET_SHA_V1_2_0, (
         f"Ruleset SHA drifted: {sha}. "
         "If this change is intentional, bump ruleset version."
     )

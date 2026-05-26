@@ -227,3 +227,63 @@ class TestEngineWithLiveAdapter:
             f"PCSK9 expected SURVIVED with live mock adapter, got {verdict.value}. "
             f"Rules: {[(r.rule_id, r.status.value) for r in results]}"
         )
+
+
+class TestParalogMap:
+    """v1.2.0: ChEMBLAdapter fetches paralog compound counts when a
+    paralog_map is supplied. Hermetic - uses mock data."""
+
+    def test_paralog_counts_populated_when_map_present(self, pcsk9_claim):
+        # Mock: primary Q8NBP7 has 100 compounds, paralog has 50
+        mock = {
+            "target_by_uniprot:Q8NBP7": {"targets": [{"target_chembl_id": "CHEMBL3243"}]},
+            "activities:CHEMBL3243": {"activities": [
+                {"molecule_chembl_id": f"CHEMBL_PRIMARY_{i}"} for i in range(100)
+            ]},
+            "target_by_uniprot:P11111": {"targets": [{"target_chembl_id": "CHEMBL_P11111"}]},
+            "activities:CHEMBL_P11111": {"activities": [
+                {"molecule_chembl_id": f"CHEMBL_PARALOG_{i}"} for i in range(50)
+            ]},
+        }
+        paralog_map = {
+            "Q8NBP7": {
+                "primary_symbol": "PCSK9",
+                "paralogs": [{"symbol": "TestParalog", "uniprot_id": "P11111"}],
+            }
+        }
+        adapter = ChEMBLAdapter(mock_data=mock, paralog_map=paralog_map)
+        out = adapter.get("chemistry", pcsk9_claim)
+        assert out["chembl_distinct_compounds"] == 100
+        assert out["chembl_paralog_compound_counts"] == {"TestParalog": 50}
+
+    def test_paralog_counts_absent_when_no_map(self, pcsk9_claim):
+        mock = {
+            "target_by_uniprot:Q8NBP7": {"targets": [{"target_chembl_id": "CHEMBL3243"}]},
+            "activities:CHEMBL3243": {"activities": [
+                {"molecule_chembl_id": f"CHEMBL_PRIMARY_{i}"} for i in range(100)
+            ]},
+        }
+        adapter = ChEMBLAdapter(mock_data=mock, paralog_map={})
+        out = adapter.get("chemistry", pcsk9_claim)
+        assert "chembl_paralog_compound_counts" not in out
+
+    def test_paralog_map_loader(self, tmp_path):
+        """load_paralog_map reads the YAML and returns the right shape."""
+        from adapters import load_paralog_map
+        p = tmp_path / "paralog_map.yaml"
+        p.write_text(
+            "paralog_map:\n"
+            "  P29597:\n"
+            "    primary_symbol: TYK2\n"
+            "    paralogs:\n"
+            "      - {symbol: JAK1, uniprot_id: P23458}\n"
+        )
+        m = load_paralog_map(p)
+        assert "P29597" in m
+        assert m["P29597"]["primary_symbol"] == "TYK2"
+        assert m["P29597"]["paralogs"][0]["symbol"] == "JAK1"
+
+    def test_paralog_map_loader_missing_file_returns_empty(self, tmp_path):
+        from adapters import load_paralog_map
+        m = load_paralog_map(tmp_path / "does_not_exist.yaml")
+        assert m == {}

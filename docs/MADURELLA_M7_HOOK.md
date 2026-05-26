@@ -16,12 +16,17 @@ SHA-locked target-validation framework.
 ## Audit traceability
 
 - **Framework**: [falsifiable-targets](https://github.com/crisprking/falsifiable-targets)
-  *(repo URL will be live after v1.2.1 push)*
-- **Ruleset version**: v1.1.0
+- **Ruleset version**: v1.2.0 (active in v1.3.0+ releases)
 - **Ruleset SHA-256**:
-  `2f9aab7d0ebc209f62c16eb35be31bc5b65fa2eb09adc02bea5bff5176269b32`
+  `35ef2b2ab5363298097962a0b6ae52c70d551a1edddc341054f75cb6e4fb7221`
 - **Claim file**: `claims/ipi1_madurella.yaml` in the framework repo
 - **Full narrative**: [`docs/AUDIT_IPI1_v1_1.md`](https://github.com/crisprking/falsifiable-targets/blob/main/docs/AUDIT_IPI1_v1_1.md)
+
+Note: The Ipi1 audit verdict is unchanged across ruleset versions
+(v1.1.0 → v1.2.0). The v1.2.0 ruleset's changes affect R6 scope and
+paralog-overshadow detection, which do not apply to the Ipi1 claim
+(novel target, no chemistry). All Ipi1 verdict and caveat results
+under v1.2.0 are byte-identical to v1.1.0.
 
 ## What the framework caught
 
@@ -70,6 +75,13 @@ will match the values above as long as the ruleset SHA is
 The framework that produced this audit is itself audited: the
 framework's first action was to audit *this* repo's claim. The first
 external audit it performed (TYK2 / psoriasis) cleanly survived the
-same ruleset. The asymmetry — substantive caveats on the in-house
-novel target, zero substantive caveats on the FDA-approved external
-mechanism — is documented as the framework's v1.2.x calibration result.
+same ruleset. Under v1.3.0 the framework was upgraded to also audit
+the pan-JAK class-collapse risk for TYK2; the re-audit found no
+pool-size overshadow (TYK2: 538 ChEMBL compounds; JAK1/2/3: 549/772/832;
+max ratio 1.55× < 2.0× threshold). See [`docs/AUDIT_TYK2_v1_3.md`](https://github.com/crisprking/falsifiable-targets/blob/main/docs/AUDIT_TYK2_v1_3.md)
+for the honest distinction between pool-size overshadow (what R6 v1.2.0
+audits) and compound-level overlap (v1.4 milestone).
+
+The asymmetry remains the framework's headline result: substantive
+caveats on the in-house novel target, zero substantive caveats on the
+FDA-approved external mechanism under deeper-audit conditions.
