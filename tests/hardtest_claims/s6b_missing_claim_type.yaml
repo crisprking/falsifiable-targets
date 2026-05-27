@@ -1,0 +1,6 @@
+# Validator stress: missing required claim_type field
+claim:
+  target_symbol: "TEST_NO_TYPE"
+  uniprot_id: "X0X0X0"
+  indication: "test"
+  mechanism: "test"

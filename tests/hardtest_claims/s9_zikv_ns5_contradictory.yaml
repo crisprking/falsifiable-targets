@@ -1,0 +1,29 @@
+# ZIKV NS5 polymerase/methyltransferase as antiviral target.
+# Tests genuinely ambiguous evidence: orthology disputed, partial paralog-
+# class overlap with POLR2A, selectivity index below novel-antiviral
+# threshold. Should hedge into FALSIFIED_WITH_CAVEATS.
+claim:
+  target_symbol: "ZIKV_NS5"
+  uniprot_id: "A0A024B7W1"
+  indication: "Zika virus infection (acute, pregnancy-associated)"
+  mechanism: |
+    ZIKV NS5 has both RNA-dependent RNA polymerase activity (C-term) and
+    methyltransferase activity (N-term). Inhibition should abrogate viral
+    replication. Multiple cell-based screens identify hits, but
+    selectivity vs human RNA polymerases (POLR2A) is inconsistent across
+    labs, and no candidate has yet shown in-vivo efficacy in pregnancy
+    models.
+  claim_type: novel_target
+  citation_pmid: "27226556"
+fixture:
+  orthology:       {sources_agreeing: 2, sources_total: 4}
+  expression:      {target_tissue_expressed: true}
+  reproducibility: {retracted: false, rebuttals_count: 2, independent_replications: 3}
+  chemistry:
+    chembl_distinct_compounds: 38
+    chembl_pfam_class_collapse_fraction: 0.45
+    chembl_pfam_class_collapse_target_symbol: "POLR2A"
+  selectivity:
+    selectivity_data: true
+    off_targets_in_indication_relevant_tissue: true
+    selectivity_index_log: 1.2
