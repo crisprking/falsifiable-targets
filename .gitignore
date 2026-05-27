@@ -1,0 +1,40 @@
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.egg-info/
+build/
+dist/
+
+# Test/lint caches
+.pytest_cache/
+.ruff_cache/
+.coverage
+htmlcov/
+
+# Adapter cache (deterministic but local-only - we don't commit raw API payloads)
+.ae_cache/
+
+# Virtualenvs
+.venv/
+venv/
+env/
+
+# Jupyter
+.ipynb_checkpoints/
+*.ipynb_checkpoints
+
+# OS junk
+.DS_Store
+Thumbs.db
+
+# IDE
+.vscode/
+.idea/
+*.swp
+
+# Added by hard-test pipeline
+*.bak
+
+# hard-test additions
+/.eggs/

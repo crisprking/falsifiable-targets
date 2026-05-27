@@ -1,0 +1,33 @@
+# CITATION.cff - https://citation-file-format.github.io/
+# GitHub renders this as a "Cite this repository" widget.
+# Update when releasing a new version.
+
+cff-version: 1.2.0
+title: "falsifiable-targets: a deterministic, SHA-locked target-validation audit framework"
+message: "If you use this software in research, please cite it as below."
+type: software
+authors:
+  - given-names: "crisprking"
+    affiliation: ""
+repository-code: "https://github.com/crisprking/falsifiable-targets"
+url: "https://github.com/crisprking/falsifiable-targets"
+abstract: >-
+  A target-validation audit framework for drug-discovery claims.
+  Seven rules consume a structured claim YAML and emit a deterministic
+  verdict (SURVIVED, FALSIFIED_WITH_CAVEATS, FALSIFIED, INSUFFICIENT_DATA)
+  with the cheapest available falsification experiment named for each
+  flagged rule. The ruleset is content-addressed (SHA-256-locked) so
+  reproducing an audit byte-identically is trivial; calibration is
+  enforced by a sentinel suite of known-positive and known-negative
+  target claims (PCSK9, TYK2, CETP, SAT-HDAC4, STAP cells, etc.).
+keywords:
+  - drug discovery
+  - target validation
+  - reproducibility
+  - falsifiability
+  - bioinformatics
+  - computational biology
+  - audit framework
+license: Apache-2.0
+version: "1.4.0"
+date-released: "2026-05-26"

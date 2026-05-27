@@ -1,0 +1,71 @@
+# Example claim: HMG-CoA reductase / hypercholesterolemia
+#
+# Gold-standard validated_mechanism claim. HMGCR is the rate-limiting
+# enzyme in cholesterol biosynthesis; statins (HMGCR inhibitors) are
+# the most-prescribed drug class in cardiovascular medicine. Mendelian
+# randomization studies of HMGCR variants confirm the causal pathway.
+#
+# Expected verdict: SURVIVED (zero substantive caveats)
+#
+# Purpose of this file: a minimal canonical example for researchers
+# learning the claim format. Use it as a starting template.
+
+claim:
+  target_symbol: "HMGCR"
+  uniprot_id: "P04035"
+  indication: "Hypercholesterolemia / atherosclerotic cardiovascular disease"
+  mechanism: |
+    HMG-CoA reductase catalyzes the rate-limiting step of cholesterol
+    biosynthesis (reduction of HMG-CoA to mevalonate). Pharmacological
+    inhibition (statins) reduces hepatic cholesterol synthesis,
+    upregulating LDL receptor expression and lowering serum LDL-C.
+    Mendelian randomization using HMGCR variants confirms the
+    LDL-C-lowering effect is causally linked to reduced cardiovascular
+    event rates.
+  claim_type: validated_mechanism
+  source_url: "https://www.uptodate.com/contents/statins-actions-side-effects-and-administration"
+  citation_pmid: "27959767"   # Ference et al. JAMA 2017 - MR on HMGCR
+  author: "example - falsifiable-targets v1.4.0"
+  date: "2026-05-26"
+
+# Fixture supplies the data live adapters cannot yet compute. Values
+# below are paraphrased from primary literature and noted in comments.
+fixture:
+  # R1 doesn't apply to validated_mechanism claims, but we supply
+  # the data honestly: HMGCR is conserved from yeast to mammals.
+  orthology:
+    sources_agreeing: 4
+    sources_total: 4
+
+  # R3 - genetics. HMGCR genetic evidence is very strong.
+  genetics:
+    # Multiple GWAS associations between HMGCR locus and LDL-C
+    # (Global Lipids Genetics Consortium, multiple papers).
+    gwas_hits: 14
+    # Mendelian: rare LoF HMGCR variants associate with lower LDL-C
+    # and lower CHD risk (consistent with the drug effect).
+    mendelian_evidence: true
+    # Not an oncology driver.
+    somatic_driver: false
+
+  # R4 - expression. Liver is the indication-relevant tissue.
+  # HMGCR is expressed in all cells (essential metabolic enzyme)
+  # but liver-targeted statin effect is mediated through hepatic HMGCR.
+  expression:
+    target_tissue_expressed: true
+
+  # R5 - replication. Statin efficacy has been replicated in dozens
+  # of independent Phase 3 trials over four decades. No retractions
+  # of the foundational mechanism work.
+  reproducibility:
+    independent_replications: 30   # rough lower bound; many more
+    retracted: false
+    pubpeer_serious_concerns: false
+
+  # R7 - selectivity. Statins are selective for HMGCR vs related
+  # short-chain dehydrogenase/reductase superfamily members.
+  selectivity:
+    selectivity_data: true
+    # Atorvastatin IC50 vs HMGCR ~10 nM; off-target >100 uM.
+    # log10(100000/10) = 4.
+    selectivity_index_log: 4.0

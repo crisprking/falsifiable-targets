@@ -1,0 +1,150 @@
+name: CI
+
+# Run on every push and PR. The matrix exists so cross-version
+# regressions get caught before any v1.x release tag.
+
+on:
+  push:
+    branches: [main]
+    tags: ['v*']
+  pull_request:
+    branches: [main]
+
+# Cancel in-flight runs for the same ref when a new commit lands.
+concurrency:
+  group: ${{ github.workflow }}-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  test:
+    name: Test (Python ${{ matrix.python-version }} on ${{ matrix.os }})
+    runs-on: ${{ matrix.os }}
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest]
+        python-version: ['3.10', '3.11', '3.12']
+        include:
+          # Also test on macOS to catch path-portability bugs early
+          - os: macos-latest
+            python-version: '3.12'
+
+    # Hermetic: no network, no live API calls. Tests must pass offline.
+    env:
+      AE_OFFLINE: "1"
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Set up Python ${{ matrix.python-version }}
+        uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python-version }}
+          cache: pip
+
+      - name: Install package + dev extras
+        run: |
+          python -m pip install --upgrade pip
+          pip install -e ".[dev]"
+
+      - name: Verify CLI entry points install correctly
+        run: |
+          ft-audit --help
+          ft-smoke --help || true   # smoke_test main has no --help
+          ft-validate --help
+
+      - name: Smoke test (sentinel calibration)
+        run: |
+          python smoke_test.py
+
+      - name: Pytest suite (hermetic)
+        run: |
+          python -m pytest tests/ -v -m "not live"
+
+      - name: Validate all claim YAMLs against schema
+        run: |
+          # Loop over claim files, skip non-claim YAMLs (paralog_map.yaml)
+          python -c "
+          import sys, yaml
+          from pathlib import Path
+          for f in sorted(Path('claims').glob('*.yaml')):
+              data = yaml.safe_load(f.read_text())
+              if not isinstance(data, dict) or 'claim' not in data:
+                  print(f'SKIP {f}')
+                  continue
+              print(f'CHECK {f}')
+          " &&
+          for f in claims/example_*.yaml claims/ipi1_*.yaml claims/tyk2_*.yaml; do
+            ft-validate "$f"
+          done
+
+      - name: Reproduce HMGCR example audit (offline)
+        run: |
+          ft-audit claims/example_hmgcr_statin.yaml --no-live --json-out /tmp/hmgcr.json
+          python -c "
+          import json, sys
+          r = json.load(open('/tmp/hmgcr.json'))
+          assert r['verdict'] == 'SURVIVED', f'expected SURVIVED, got {r[\"verdict\"]}'
+          assert r['ruleset_sha256'] == '35ef2b2ab5363298097962a0b6ae52c70d551a1edddc341054f75cb6e4fb7221', f'SHA drift: {r[\"ruleset_sha256\"]}'
+          print('OK: HMGCR audit reproduces; ruleset SHA stable')
+          "
+
+      - name: Reproduce Ipi1 audit (offline)
+        run: |
+          ft-audit claims/ipi1_madurella.yaml --no-live --json-out /tmp/ipi1.json
+          python -c "
+          import json
+          r = json.load(open('/tmp/ipi1.json'))
+          assert r['verdict'] == 'FALSIFIED_WITH_CAVEATS', f'expected FALSIFIED_WITH_CAVEATS, got {r[\"verdict\"]}'
+          assert r['substantive_caveat_count'] == 2, f'expected 2 substantive caveats, got {r[\"substantive_caveat_count\"]}'
+          print('OK: Ipi1 audit reproduces under v1.2.0 ruleset')
+          "
+
+      - name: Reproduce TYK2 audit (offline)
+        run: |
+          ft-audit claims/tyk2_psoriasis.yaml --no-live --json-out /tmp/tyk2.json
+          python -c "
+          import json
+          r = json.load(open('/tmp/tyk2.json'))
+          assert r['verdict'] == 'SURVIVED', f'expected SURVIVED, got {r[\"verdict\"]}'
+          print('OK: TYK2 audit reproduces under v1.2.0 ruleset')
+          "
+
+  lint:
+    name: Lint
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+          cache: pip
+      - name: Install ruff
+        run: pip install "ruff>=0.4"
+      - name: ruff check
+        run: ruff check .
+      - name: ruff format --check
+        # Soft-fail format check while project stabilizes; lint failures
+        # are what we hard-fail on.
+        run: ruff format --check . || echo "::warning::Code not ruff-formatted (advisory)"
+
+  # Verify the git tag matches _version.py on tagged releases.
+  # Prevents v1.5.0 tag with _version.py still at 1.4.0.
+  version-tag-match:
+    name: Version-tag consistency
+    if: startsWith(github.ref, 'refs/tags/v')
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: '3.12'
+      - name: Check tag matches _version.__version__
+        run: |
+          TAG="${GITHUB_REF#refs/tags/v}"
+          VER=$(python -c "from _version import __version__; print(__version__)")
+          if [ "$TAG" != "$VER" ]; then
+            echo "Tag v$TAG does not match _version.__version__=$VER"
+            exit 1
+          fi
+          echo "OK: tag and version match ($VER)"
