@@ -1,6 +1,4 @@
 claim:
-  target_symbol: "MAPK14
-  uniprot_id: "Q16539"
-  indication: "Inflammation"
-  mechanism: "p38 alpha"
-  claim_type: validated_mechanism
+  target_symbol: "TEST: BAD: YAML"
+  uniprot_id: [unclosed
+  indication: "test"

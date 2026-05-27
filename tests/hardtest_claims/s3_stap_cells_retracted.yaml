@@ -1,19 +1,26 @@
+# OCT4 reprogramming via stress (STAP cells) - canonical replication failure.
+# Obokata et al 2014 Nature paper retracted; no independent lab reproduced.
+# Should be cleanly FALSIFIED by R5_replication.
 claim:
   target_symbol: "OCT4"
   uniprot_id: "Q01860"
-  indication: "Pluripotent-stem-cell-based regenerative therapy (hypothetical)"
+  indication: "Cell reprogramming (stimulus-triggered acquisition of pluripotency)"
   mechanism: |
-    Stimulus-Triggered Acquisition of Pluripotency (Obokata, Nature 2014):
-    transient low-pH stress reprograms CD45+ cells. Both primary papers
-    retracted 2014-07-02 after RIKEN misconduct finding.
+    Per Obokata et al (Nature 2014), brief acid bath stress induces somatic
+    cells to acquire pluripotency without genetic manipulation, marked by
+    OCT4 expression. Both original Nature papers retracted (Jul 2014);
+    extensive replication failures across multiple labs.
   claim_type: extraordinary_claim
-  citation_doi: "10.1038/nature12968"
+  citation_pmid: "24476887"
 fixture:
-  orthology:   {sources_agreeing: 4, sources_total: 4}
-  expression:  {target_tissue_expressed: true}
+  orthology:       {sources_agreeing: 4, sources_total: 4}
   reproducibility:
     retracted: true
     retraction_year: 2014
-    rebuttals_count: 5
+    rebuttals_count: 8
     independent_replications: 0
-  selectivity: {selectivity_data: false}
+  expression:      {target_tissue_expressed: true}
+  selectivity:
+    selectivity_data: false
+    off_targets_in_indication_relevant_tissue: false
+    selectivity_index_log: 0.0

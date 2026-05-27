@@ -1,23 +1,28 @@
+# BACE1 / Alzheimer's - the canonical "mechanism valid, clinical contested" case.
+# APP A673T protective variant validates the mechanism; every Phase 3 BACE1
+# inhibitor (verubecestat, atabecestat, lanabecestat, elenbecestat, umibecestat)
+# failed or worsened cognition. clinical_outcome_contested: true.
 claim:
   target_symbol: "BACE1"
   uniprot_id: "P56817"
-  indication: "Alzheimer disease (mild-to-moderate, symptomatic)"
+  indication: "Alzheimer's disease"
   mechanism: |
-    BACE1 cleaves APP at the beta-site. APP A673T (Jonsson 2012) is
-    approximately five-fold protective. Every Phase 3 BACE1 inhibitor
-    trial has failed efficacy or shown cognitive worsening.
+    BACE1 cleaves APP to produce amyloid-beta. Inhibition should reduce
+    Abeta plaque load. APP A673T loss-of-function variant (Jonsson 2012)
+    confers Mendelian protection from AD. However, every Phase 3 trial of
+    BACE1 inhibitors has failed for lack of efficacy or cognitive worsening.
   claim_type: validated_mechanism
   citation_pmid: "22801501"
 fixture:
   orthology:       {sources_agreeing: 4, sources_total: 4}
   genetics:
-    gwas_hits: 6
+    gwas_hits: 12
     mendelian_evidence: true
-    loss_of_function_phenotype: "APP A673T protective"
+    loss_of_function_phenotype: "A673T protective; reduced AD risk"
     clinical_outcome_contested: true
   expression:      {target_tissue_expressed: true}
-  reproducibility: {retracted: false, rebuttals_count: 0, independent_replications: 80}
+  reproducibility: {retracted: false, rebuttals_count: 0, independent_replications: 100}
   selectivity:
     selectivity_data: true
     off_targets_in_indication_relevant_tissue: false
-    selectivity_index_log: 1.5
+    selectivity_index_log: 2.5

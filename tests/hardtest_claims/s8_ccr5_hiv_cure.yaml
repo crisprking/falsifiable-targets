@@ -1,9 +1,6 @@
-# CCR5 as HIV entry cofactor; gene-editing cure approach.
-# Extraordinary because the claim is "cure HIV via genome editing", but
-# the evidence supports it: CCR5-delta32 homozygotes are naturally HIV-1
-# resistant (Liu et al 1996), and two patients (Timothy Brown Berlin 2009,
-# Adam Castillejo London 2019) achieved sustained remission after CCR5-
-# delta32 allogeneic BMT. This is an extraordinary_claim that SHOULD survive.
+# CCR5 as HIV entry cofactor; gene-editing cure via CCR5 ablation.
+# Tests an extraordinary_claim that SHOULD survive because the evidence
+# matches the bar: human Mendelian protection + 2+ confirmed cures.
 claim:
   target_symbol: "CCR5"
   uniprot_id: "P51681"
@@ -11,11 +8,11 @@ claim:
   mechanism: |
     CCR5 is the dominant co-receptor for R5-tropic HIV-1 entry.
     CCR5-delta32 homozygotes (Liu 1996, PMID 8674119) lack functional
-    surface CCR5 and are protected from infection. Two confirmed cures
-    after allogeneic stem-cell transplant from CCR5-delta32 donors:
-    Berlin patient (Hutter 2009, PMID 19213682), London patient
-    (Gupta 2019, PMID 30836379). Multiple subsequent cures reported
-    via the same mechanism.
+    surface CCR5 and are protected from HIV-1 infection. Two confirmed
+    cures after allogeneic stem-cell transplant from CCR5-delta32 donors:
+    Berlin patient (Hutter 2009, PMID 19213682) and London patient
+    (Gupta 2019, PMID 30836379). Multiple subsequent cures via the same
+    mechanism.
   claim_type: extraordinary_claim
   citation_pmid: "19213682"
 fixture:

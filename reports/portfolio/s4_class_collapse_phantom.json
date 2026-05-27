@@ -1,0 +1,142 @@
+{
+  "schema_version": "1.1",
+  "audit_timestamp_utc": "2026-05-27T17:06:12.813945+00:00",
+  "tool": {
+    "name": "falsifiable-targets",
+    "version": "1.4.0",
+    "python_version": "3.12.12"
+  },
+  "ruleset_version": "1.2.0",
+  "ruleset_sha256": "35ef2b2ab5363298097962a0b6ae52c70d551a1edddc341054f75cb6e4fb7221",
+  "claim": {
+    "target_symbol": "SAT_PATHOGEN_HOMOLOG_X",
+    "uniprot_id": "X0X0X0",
+    "indication": "Tropical fungal infection (synthetic test target)",
+    "claim_type": "novel_target",
+    "claim_sha256": "e340f4e6ee6bb166e45a6f2ddd1a857bf0f9da2a5765c573ba79249ca17e50ff"
+  },
+  "adapter_inventory": [
+    {
+      "name": "FixtureAdapter",
+      "live": false
+    }
+  ],
+  "verdict": "FALSIFIED",
+  "score": 0.2,
+  "cheapest_falsification": {
+    "rule_id": "R6_chemistry_class_collapse",
+    "tier": "public_data_lookup",
+    "experiment": "Group ChEMBL hits by Pfam class. 91% are HDAC4 inhibitors - the chemistry support for SAT_PATHOGEN_HOMOLOG_X is class-collapsed phantom evidence."
+  },
+  "per_rule": [
+    {
+      "rule_id": "R1_orthology",
+      "status": "passed",
+      "confidence": 0.9,
+      "input_data": {
+        "sources_agreeing": 4,
+        "sources_total": 4
+      },
+      "evidence": {
+        "sources_agreeing": 4,
+        "sources_total": 4
+      },
+      "falsification_tier": null,
+      "falsification_experiment": null,
+      "caveats": []
+    },
+    {
+      "rule_id": "R2_chemistry_support",
+      "status": "not_applicable",
+      "confidence": 0.0,
+      "input_data": {},
+      "evidence": {},
+      "falsification_tier": null,
+      "falsification_experiment": null,
+      "caveats": []
+    },
+    {
+      "rule_id": "R3_genetics_support",
+      "status": "not_applicable",
+      "confidence": 0.0,
+      "input_data": {},
+      "evidence": {},
+      "falsification_tier": null,
+      "falsification_experiment": null,
+      "caveats": []
+    },
+    {
+      "rule_id": "R4_expression",
+      "status": "passed",
+      "confidence": 0.8,
+      "input_data": {
+        "target_tissue_expressed": true
+      },
+      "evidence": {
+        "target_tissue_expressed": true
+      },
+      "falsification_tier": null,
+      "falsification_experiment": null,
+      "caveats": []
+    },
+    {
+      "rule_id": "R5_replication",
+      "status": "passed",
+      "confidence": 0.9,
+      "input_data": {
+        "retracted": false,
+        "rebuttals_count": 0,
+        "independent_replications": 3
+      },
+      "evidence": {
+        "retracted": false,
+        "rebuttals_count": 0,
+        "independent_replications": 3
+      },
+      "falsification_tier": null,
+      "falsification_experiment": null,
+      "caveats": []
+    },
+    {
+      "rule_id": "R6_chemistry_class_collapse",
+      "status": "falsified",
+      "confidence": 0.95,
+      "input_data": {
+        "chembl_distinct_compounds": 42,
+        "chembl_pfam_class_collapse_fraction": 0.91,
+        "chembl_pfam_class_collapse_target_symbol": "HDAC4"
+      },
+      "evidence": {
+        "collapse_fraction": 0.91,
+        "collapse_target": "HDAC4"
+      },
+      "falsification_tier": "public_data_lookup",
+      "falsification_experiment": "Group ChEMBL hits by Pfam class. 91% are HDAC4 inhibitors - the chemistry support for SAT_PATHOGEN_HOMOLOG_X is class-collapsed phantom evidence.",
+      "caveats": []
+    },
+    {
+      "rule_id": "R7_selectivity_counterscreen",
+      "status": "passed",
+      "confidence": 0.5,
+      "input_data": {
+        "selectivity_data": false,
+        "off_targets_in_indication_relevant_tissue": true,
+        "selectivity_index_log": 0.5
+      },
+      "evidence": {
+        "selectivity_data_present": false
+      },
+      "falsification_tier": null,
+      "falsification_experiment": null,
+      "caveats": [
+        {
+          "kind": "substantive",
+          "text": "no selectivity data for a novel-target claim; the selectivity vs human paralog question is unresolved and the claim remains provisional until counter-screen data exists"
+        }
+      ]
+    }
+  ],
+  "substantive_caveat_count": 1,
+  "operational_note_count": 0,
+  "adapter_mode": "fixture-only"
+}

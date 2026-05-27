@@ -1,8 +1,7 @@
 # ZIKV NS5 polymerase/methyltransferase as antiviral target.
-# Genuinely ambiguous: multiple labs report different selectivity profiles
-# vs human RNA polymerases. Some compounds active in cell-based assays fail
-# in vivo. Single replicate of a key essentiality study. Selectivity index
-# below threshold for novel antivirals. This is the "thin evidence" case.
+# Tests genuinely ambiguous evidence: orthology disputed, partial paralog-
+# class overlap with POLR2A, selectivity index below novel-antiviral
+# threshold. Should hedge into FALSIFIED_WITH_CAVEATS.
 claim:
   target_symbol: "ZIKV_NS5"
   uniprot_id: "A0A024B7W1"
@@ -10,9 +9,10 @@ claim:
   mechanism: |
     ZIKV NS5 has both RNA-dependent RNA polymerase activity (C-term) and
     methyltransferase activity (N-term). Inhibition should abrogate viral
-    replication. Multiple cell-based screens identify hits, but selectivity
-    vs human RNA polymerases (POLR2A) is inconsistent across labs, and no
-    candidate has yet shown in-vivo efficacy in pregnancy models.
+    replication. Multiple cell-based screens identify hits, but
+    selectivity vs human RNA polymerases (POLR2A) is inconsistent across
+    labs, and no candidate has yet shown in-vivo efficacy in pregnancy
+    models.
   claim_type: novel_target
   citation_pmid: "27226556"
 fixture:

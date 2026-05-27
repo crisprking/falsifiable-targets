@@ -65,7 +65,7 @@ def main():
     )
     parser.add_argument(
         "--debug", action="store_true",
-        help="Show full tracebacks on error paths (default: one-line stderr)",
+        help="Show full tracebacks on unhandled errors (default: one-line stderr)",
     )
     args = parser.parse_args()
 
@@ -77,36 +77,53 @@ def main():
     from smoke_test import RULES, ClaimType, RuleStatus, TargetClaim, aggregate
 
     claim_path = Path(args.claim_path)
-    with open(claim_path) as f:
-        spec = yaml.safe_load(f)
-
-    c = spec["claim"]
-
-    _required = ("target_symbol", "uniprot_id", "indication", "mechanism", "claim_type")
-    _missing = [_f for _f in _required if _f not in c or c[_f] in (None, "")]
-    if _missing:
-        print(f"ERROR: {claim_path}: missing required field(s) under 'claim': "
-              f"{', '.join(_missing)}", file=sys.stderr)
+    if not claim_path.exists():
+        print(f"ERROR: claim file not found: {claim_path}", file=sys.stderr)
         return 5
 
-    _valid_types = {"validated_mechanism", "novel_target", "extraordinary_claim",
-                    "chemistry_series", "repurposing"}
-    if c["claim_type"] not in _valid_types:
-        print(f"ERROR: {claim_path}: invalid claim_type "
-              f"{c['claim_type']!r}. Must be one of: {sorted(_valid_types)}",
+    # v1.4.2: pre-validate input before pushing into the rule engine.
+    try:
+        with open(claim_path) as f:
+            raw = f.read()
+        if not raw.strip():
+            print(f"ERROR: claim file is empty: {claim_path}", file=sys.stderr)
+            return 5
+        spec = yaml.safe_load(raw)
+    except yaml.YAMLError as e:
+        print(f"ERROR: YAML parse error in {claim_path}:", file=sys.stderr)
+        print(f"  {e}", file=sys.stderr)
+        return 5
+
+    if not isinstance(spec, dict) or "claim" not in spec:
+        print(f"ERROR: {claim_path} does not contain a 'claim' top-level key",
               file=sys.stderr)
         return 5
 
-    if "fixture" in spec and not isinstance(spec["fixture"], dict):
-        print(f"ERROR: {claim_path}: 'fixture' must be a mapping (got "
-              f"{type(spec['fixture']).__name__})", file=sys.stderr)
+    c = spec["claim"]
+    if not isinstance(c, dict):
+        print(f"ERROR: 'claim' in {claim_path} is not a mapping", file=sys.stderr)
+        return 5
+
+    required = {"target_symbol", "indication", "mechanism", "claim_type"}
+    missing = required - set(c.keys())
+    if missing:
+        print(f"ERROR: {claim_path} missing required claim fields: "
+              f"{sorted(missing)}", file=sys.stderr)
+        return 5
+
+    try:
+        claim_type_enum = ClaimType(c["claim_type"])
+    except ValueError:
+        valid = [ct.value for ct in ClaimType]
+        print(f"ERROR: invalid claim_type {c['claim_type']!r} in {claim_path}. "
+              f"Valid: {valid}", file=sys.stderr)
         return 5
 
     claim = TargetClaim(
         target_symbol=c["target_symbol"],
         indication=c["indication"],
         mechanism=c["mechanism"],
-        claim_type=ClaimType(c["claim_type"]),
+        claim_type=claim_type_enum,
         uniprot_id=c.get("uniprot_id"),
     )
 
@@ -277,25 +294,30 @@ def main():
 
 
 def _run():
-    """Entry point with exception-to-exit-code translation."""
-    import sys as _sys
-    debug = "--debug" in _sys.argv
+    """Entry point with exception-to-exit-code translation.
+
+    Verdict-based exits (0/1/2/3) come from ``sys.exit()`` inside ``main()``,
+    which raises ``SystemExit`` and propagates cleanly. Error-path returns of
+    5 from ``main()`` are honored. Any other unhandled exception becomes exit
+    5 with a one-line message (or full traceback if ``--debug`` is set).
+    """
+    debug = "--debug" in sys.argv
     try:
         rc = main()
-        _sys.exit(rc if rc is not None else 0)
+        sys.exit(rc if rc is not None else 0)
     except SystemExit:
         raise
     except KeyboardInterrupt:
-        print("ERROR: interrupted by user", file=_sys.stderr)
-        _sys.exit(130)
-    except Exception as _e:
+        print("ERROR: interrupted by user", file=sys.stderr)
+        sys.exit(130)
+    except Exception as e:
         if debug:
-            import traceback as _tb
-            _tb.print_exc()
+            import traceback
+            traceback.print_exc()
         else:
-            print(f"ERROR: {type(_e).__name__}: {_e}", file=_sys.stderr)
-            print("  (re-run with --debug for full traceback)", file=_sys.stderr)
-        _sys.exit(5)
+            print(f"ERROR: {type(e).__name__}: {e}", file=sys.stderr)
+            print("  (re-run with --debug for full traceback)", file=sys.stderr)
+        sys.exit(5)
 
 
 if __name__ == "__main__":

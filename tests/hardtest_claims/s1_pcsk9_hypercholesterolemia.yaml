@@ -1,11 +1,18 @@
+# PCSK9 / hypercholesterolemia - the canonical validated_mechanism survivor.
+# Human Mendelian protection (loss-of-function carriers have lower LDL), two
+# approved drugs (alirocumab, evolocumab), CVD outcome benefit demonstrated.
 claim:
   target_symbol: "PCSK9"
   uniprot_id: "Q8NBP7"
-  indication: "Hypercholesterolemia / atherosclerotic cardiovascular disease"
+  indication: "Hypercholesterolemia"
   mechanism: |
-    PCSK9 binds LDLR on hepatocytes and routes it to lysosomal degradation.
-    LoF variants (R46L, Y142X, C679X; Cohen 2006) lower lifetime LDL-C and
-    reduce CHD 50-88 percent.
+    PCSK9 binds the LDL receptor and targets it for lysosomal degradation.
+    Inhibiting PCSK9 (monoclonal antibodies, siRNA) preserves LDLR on
+    hepatocytes, lowering serum LDL. Validated by:
+    1) Mendelian loss-of-function carriers (Cohen 2006) with lifelong low
+       LDL and reduced coronary disease.
+    2) Two approved drugs (alirocumab, evolocumab).
+    3) FOURIER / ODYSSEY CVD outcome trials.
   claim_type: validated_mechanism
   citation_pmid: "16554528"
 fixture:
@@ -13,10 +20,10 @@ fixture:
   genetics:
     gwas_hits: 31
     mendelian_evidence: true
-    loss_of_function_phenotype: "LoF carriers protected from CHD (Cohen 2006)"
+    loss_of_function_phenotype: "low LDL, reduced CAD"
     clinical_outcome_contested: false
   expression:      {target_tissue_expressed: true}
-  reproducibility: {retracted: false, rebuttals_count: 0, independent_replications: 100}
+  reproducibility: {retracted: false, rebuttals_count: 0, independent_replications: 500}
   selectivity:
     selectivity_data: true
     off_targets_in_indication_relevant_tissue: false

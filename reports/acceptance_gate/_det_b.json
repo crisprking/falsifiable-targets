@@ -1,0 +1,142 @@
+{
+  "schema_version": "1.1",
+  "audit_timestamp_utc": "2026-05-27T17:06:11.862447+00:00",
+  "tool": {
+    "name": "falsifiable-targets",
+    "version": "1.4.0",
+    "python_version": "3.12.12"
+  },
+  "ruleset_version": "1.2.0",
+  "ruleset_sha256": "35ef2b2ab5363298097962a0b6ae52c70d551a1edddc341054f75cb6e4fb7221",
+  "claim": {
+    "target_symbol": "PCSK9",
+    "uniprot_id": "Q8NBP7",
+    "indication": "Hypercholesterolemia",
+    "claim_type": "validated_mechanism",
+    "claim_sha256": "aab460dfb3ea18268033108ab7ba70c060ce9f552cfd6463c31ef2610c00f75d"
+  },
+  "adapter_inventory": [
+    {
+      "name": "FixtureAdapter",
+      "live": false
+    }
+  ],
+  "verdict": "SURVIVED",
+  "score": 0.0,
+  "cheapest_falsification": null,
+  "per_rule": [
+    {
+      "rule_id": "R1_orthology",
+      "status": "not_applicable",
+      "confidence": 0.0,
+      "input_data": {},
+      "evidence": {},
+      "falsification_tier": null,
+      "falsification_experiment": null,
+      "caveats": []
+    },
+    {
+      "rule_id": "R2_chemistry_support",
+      "status": "abstained",
+      "confidence": 0.0,
+      "input_data": {},
+      "evidence": {},
+      "falsification_tier": null,
+      "falsification_experiment": null,
+      "caveats": [
+        {
+          "kind": "operational",
+          "text": "no chemistry data; rule abstains"
+        }
+      ]
+    },
+    {
+      "rule_id": "R3_genetics_support",
+      "status": "passed",
+      "confidence": 0.85,
+      "input_data": {
+        "gwas_hits": 31,
+        "mendelian_evidence": true,
+        "loss_of_function_phenotype": "low LDL, reduced CAD",
+        "clinical_outcome_contested": false
+      },
+      "evidence": {
+        "gwas_hits": 31,
+        "mendelian_evidence": true,
+        "loss_of_function_phenotype": "low LDL, reduced CAD",
+        "clinical_outcome_contested": false
+      },
+      "falsification_tier": null,
+      "falsification_experiment": null,
+      "caveats": []
+    },
+    {
+      "rule_id": "R4_expression",
+      "status": "passed",
+      "confidence": 0.8,
+      "input_data": {
+        "target_tissue_expressed": true
+      },
+      "evidence": {
+        "target_tissue_expressed": true
+      },
+      "falsification_tier": null,
+      "falsification_experiment": null,
+      "caveats": []
+    },
+    {
+      "rule_id": "R5_replication",
+      "status": "passed",
+      "confidence": 0.9,
+      "input_data": {
+        "retracted": false,
+        "rebuttals_count": 0,
+        "independent_replications": 500
+      },
+      "evidence": {
+        "retracted": false,
+        "rebuttals_count": 0,
+        "independent_replications": 500
+      },
+      "falsification_tier": null,
+      "falsification_experiment": null,
+      "caveats": []
+    },
+    {
+      "rule_id": "R6_chemistry_class_collapse",
+      "status": "not_applicable",
+      "confidence": 0.0,
+      "input_data": {},
+      "evidence": {},
+      "falsification_tier": null,
+      "falsification_experiment": null,
+      "caveats": [
+        {
+          "kind": "operational",
+          "text": "no chemistry to assess for class collapse; rule not applicable"
+        }
+      ]
+    },
+    {
+      "rule_id": "R7_selectivity_counterscreen",
+      "status": "passed",
+      "confidence": 0.8,
+      "input_data": {
+        "selectivity_data": true,
+        "off_targets_in_indication_relevant_tissue": false,
+        "selectivity_index_log": 3.5
+      },
+      "evidence": {
+        "selectivity_data": true,
+        "off_targets_in_indication_relevant_tissue": false,
+        "selectivity_index_log": 3.5
+      },
+      "falsification_tier": null,
+      "falsification_experiment": null,
+      "caveats": []
+    }
+  ],
+  "substantive_caveat_count": 0,
+  "operational_note_count": 2,
+  "adapter_mode": "fixture-only"
+}

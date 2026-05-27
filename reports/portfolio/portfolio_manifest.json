@@ -1,0 +1,162 @@
+{
+  "generated_utc": "2026-05-27T17:06:13.854180+00:00",
+  "claim_count": 12,
+  "verdict_summary": {
+    "SURVIVED": 2,
+    "FALSIFIED_WITH_CAVEATS": 4,
+    "FALSIFIED": 2,
+    "ERROR": 4
+  },
+  "tier_summary": {
+    "TIER_3_PROCEED": 2,
+    "TIER_2_INVESTIGATE": 4,
+    "TIER_1_DROP": 2,
+    "TIER_0_FIX_INPUT": 4
+  },
+  "rows": [
+    {
+      "claim_file": "s1_pcsk9_hypercholesterolemia.yaml",
+      "target": "PCSK9",
+      "verdict": "SURVIVED",
+      "risk_tier": "TIER_3_PROCEED",
+      "score": 0.0,
+      "caveats": 0,
+      "fired_rules": "-",
+      "cheapest_fix": "-",
+      "action_items": "data gap: R2_chemistry_support abstained (no input)",
+      "report_json": "/kaggle/working/falsifiable-targets-main/reports/portfolio/s1_pcsk9_hypercholesterolemia.json"
+    },
+    {
+      "claim_file": "s2_bace1_alzheimers.yaml",
+      "target": "BACE1",
+      "verdict": "FALSIFIED_WITH_CAVEATS",
+      "risk_tier": "TIER_2_INVESTIGATE",
+      "score": 0.0,
+      "caveats": 1,
+      "fired_rules": "-",
+      "cheapest_fix": "-",
+      "action_items": "R3_genetics_support: clinical outcome contested; framework does not predict trial outcomes - mechanism validity does not entail clinical efficacy",
+      "report_json": "/kaggle/working/falsifiable-targets-main/reports/portfolio/s2_bace1_alzheimers.json"
+    },
+    {
+      "claim_file": "s3_stap_cells_retracted.yaml",
+      "target": "OCT4",
+      "verdict": "FALSIFIED",
+      "risk_tier": "TIER_1_DROP",
+      "score": 0.5,
+      "caveats": 0,
+      "fired_rules": "R5_replication",
+      "cheapest_fix": "R5_replication @ public_data_lookup",
+      "action_items": "R5_replication FALSIFIED @ public_data_lookup: PubMed / Retraction Watch lookup. Primary claim is retracted (2014).",
+      "report_json": "/kaggle/working/falsifiable-targets-main/reports/portfolio/s3_stap_cells_retracted.json"
+    },
+    {
+      "claim_file": "s4_class_collapse_phantom.yaml",
+      "target": "SAT_PATHOGEN_HOMOLOG_X",
+      "verdict": "FALSIFIED",
+      "risk_tier": "TIER_1_DROP",
+      "score": 0.2,
+      "caveats": 1,
+      "fired_rules": "R6_chemistry_class_collapse",
+      "cheapest_fix": "R6_chemistry_class_collapse @ public_data_lookup",
+      "action_items": "R6_chemistry_class_collapse FALSIFIED @ public_data_lookup: Group ChEMBL hits by Pfam class. 91% are HDAC4 inhibitors - the chemistry support for SAT_PATHOGEN_HOMOLOG_X is class-collapsed phantom evidence.",
+      "report_json": "/kaggle/working/falsifiable-targets-main/reports/portfolio/s4_class_collapse_phantom.json"
+    },
+    {
+      "claim_file": "s5_novel_pathogen_weak.yaml",
+      "target": "FUNGAL_KINASE_FKx1",
+      "verdict": "FALSIFIED_WITH_CAVEATS",
+      "risk_tier": "TIER_2_INVESTIGATE",
+      "score": 0.0,
+      "caveats": 2,
+      "fired_rules": "-",
+      "cheapest_fix": "-",
+      "action_items": "R1_orthology: orthology sources disagree (1/4, strict majority requires 3); selectivity claim weakened until resolved structurally; R7_selectivity_counterscreen: no selectivity data for a novel-target claim; the selectivity vs human paralog question is unresolved and the claim remains provisional until counter-screen dat",
+      "report_json": "/kaggle/working/falsifiable-targets-main/reports/portfolio/s5_novel_pathogen_weak.json"
+    },
+    {
+      "claim_file": "s6a_malformed.yaml",
+      "target": "(unparsed)",
+      "verdict": "ERROR",
+      "risk_tier": "TIER_0_FIX_INPUT",
+      "score": "",
+      "caveats": 0,
+      "fired_rules": "",
+      "cheapest_fix": "-",
+      "action_items": "ERROR: invalid claim_type 'validatedmechanism' in /kaggle/working/falsifiable-targets-main/tests/hardtest_claims/s6a_malformed.yaml. Valid: ['validated_mechanism', 'novel_target', 'chemistry_series', ",
+      "report_json": ""
+    },
+    {
+      "claim_file": "s6b_missing_claim_type.yaml",
+      "target": "(unparsed)",
+      "verdict": "ERROR",
+      "risk_tier": "TIER_0_FIX_INPUT",
+      "score": "",
+      "caveats": 0,
+      "fired_rules": "",
+      "cheapest_fix": "-",
+      "action_items": "ERROR: /kaggle/working/falsifiable-targets-main/tests/hardtest_claims/s6b_missing_claim_type.yaml missing required claim fields: ['claim_type']",
+      "report_json": ""
+    },
+    {
+      "claim_file": "s6c_empty.yaml",
+      "target": "(unparsed)",
+      "verdict": "ERROR",
+      "risk_tier": "TIER_0_FIX_INPUT",
+      "score": "",
+      "caveats": 0,
+      "fired_rules": "",
+      "cheapest_fix": "-",
+      "action_items": "ERROR: claim file is empty: /kaggle/working/falsifiable-targets-main/tests/hardtest_claims/s6c_empty.yaml",
+      "report_json": ""
+    },
+    {
+      "claim_file": "s6d_yaml_parse_error.yaml",
+      "target": "(unparsed)",
+      "verdict": "ERROR",
+      "risk_tier": "TIER_0_FIX_INPUT",
+      "score": "",
+      "caveats": 0,
+      "fired_rules": "",
+      "cheapest_fix": "-",
+      "action_items": "ERROR: YAML parse error in /kaggle/working/falsifiable-targets-main/tests/hardtest_claims/s6d_yaml_parse_error.yaml:",
+      "report_json": ""
+    },
+    {
+      "claim_file": "s7_kras_g12c_nsclc.yaml",
+      "target": "KRAS",
+      "verdict": "FALSIFIED_WITH_CAVEATS",
+      "risk_tier": "TIER_2_INVESTIGATE",
+      "score": 0.0,
+      "caveats": 1,
+      "fired_rules": "-",
+      "cheapest_fix": "-",
+      "action_items": "R3_genetics_support: clinical outcome contested; framework does not predict trial outcomes - mechanism validity does not entail clinical efficacy",
+      "report_json": "/kaggle/working/falsifiable-targets-main/reports/portfolio/s7_kras_g12c_nsclc.json"
+    },
+    {
+      "claim_file": "s8_ccr5_hiv_cure.yaml",
+      "target": "CCR5",
+      "verdict": "SURVIVED",
+      "risk_tier": "TIER_3_PROCEED",
+      "score": 0.0,
+      "caveats": 0,
+      "fired_rules": "-",
+      "cheapest_fix": "-",
+      "action_items": "all rules cleared",
+      "report_json": "/kaggle/working/falsifiable-targets-main/reports/portfolio/s8_ccr5_hiv_cure.json"
+    },
+    {
+      "claim_file": "s9_zikv_ns5_contradictory.yaml",
+      "target": "ZIKV_NS5",
+      "verdict": "FALSIFIED_WITH_CAVEATS",
+      "risk_tier": "TIER_2_INVESTIGATE",
+      "score": 0.0,
+      "caveats": 1,
+      "fired_rules": "-",
+      "cheapest_fix": "-",
+      "action_items": "R1_orthology: orthology sources disagree (2/4, strict majority requires 3); selectivity claim weakened until resolved structurally",
+      "report_json": "/kaggle/working/falsifiable-targets-main/reports/portfolio/s9_zikv_ns5_contradictory.json"
+    }
+  ]
+}

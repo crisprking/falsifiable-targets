@@ -1,15 +1,26 @@
+# Phantom novel target whose chemistry support collapses onto HDAC4 paralog.
+# Classic R6_chemistry_class_collapse trigger: ChEMBL hits cluster on a
+# different Pfam class than the claimed target.
 claim:
   target_symbol: "SAT_PATHOGEN_HOMOLOG_X"
-  uniprot_id: "Q9XYZ1"
-  indication: "Hypothetical pathogen infection (chemistry-series claim)"
+  uniprot_id: "X0X0X0"
+  indication: "Tropical fungal infection (synthetic test target)"
   mechanism: |
-    Vendor pitches 147 ChEMBL actives vs pathogen target X. Audit tests
-    whether they are on-target or redirected human HDAC4 inhibitors.
-  claim_type: chemistry_series
+    Hypothesized novel deacetylase essential for fungal cell-wall remodeling.
+    Inhibition should arrest hyphal growth. ChEMBL screen of "active against
+    X" compounds reveals 91 percent are known HDAC4 inhibitors - the
+    chemistry support points at a human paralog, not the claimed target.
+  claim_type: novel_target
+  citation_pmid: "00000000"
 fixture:
+  orthology:       {sources_agreeing: 4, sources_total: 4}
+  expression:      {target_tissue_expressed: true}
+  reproducibility: {retracted: false, rebuttals_count: 0, independent_replications: 3}
   chemistry:
-    chembl_distinct_compounds: 147
+    chembl_distinct_compounds: 42
     chembl_pfam_class_collapse_fraction: 0.91
     chembl_pfam_class_collapse_target_symbol: "HDAC4"
   selectivity:
     selectivity_data: false
+    off_targets_in_indication_relevant_tissue: true
+    selectivity_index_log: 0.5
