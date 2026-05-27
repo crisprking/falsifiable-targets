@@ -63,6 +63,10 @@ def main():
         "--json-out", default=None,
         help="Write structured JSON report to this path",
     )
+    parser.add_argument(
+        "--debug", action="store_true",
+        help="Show full tracebacks on unhandled errors (default: one-line stderr)",
+    )
     args = parser.parse_args()
 
     if args.offline:
@@ -289,5 +293,32 @@ def main():
     sys.exit(exit_codes.get(verdict, 99))
 
 
+def _run():
+    """Entry point with exception-to-exit-code translation.
+
+    Verdict-based exits (0/1/2/3) come from ``sys.exit()`` inside ``main()``,
+    which raises ``SystemExit`` and propagates cleanly. Error-path returns of
+    5 from ``main()`` are honored. Any other unhandled exception becomes exit
+    5 with a one-line message (or full traceback if ``--debug`` is set).
+    """
+    debug = "--debug" in sys.argv
+    try:
+        rc = main()
+        sys.exit(rc if rc is not None else 0)
+    except SystemExit:
+        raise
+    except KeyboardInterrupt:
+        print("ERROR: interrupted by user", file=sys.stderr)
+        sys.exit(130)
+    except Exception as e:
+        if debug:
+            import traceback
+            traceback.print_exc()
+        else:
+            print(f"ERROR: {type(e).__name__}: {e}", file=sys.stderr)
+            print("  (re-run with --debug for full traceback)", file=sys.stderr)
+        sys.exit(5)
+
+
 if __name__ == "__main__":
-    main()
+    _run()

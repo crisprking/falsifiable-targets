@@ -1,0 +1,21 @@
+# Novel fungal kinase, weak orthology and absent selectivity counter-screen.
+# Should land FALSIFIED_WITH_CAVEATS via R1 + R7 substantive caveats.
+claim:
+  target_symbol: "FUNGAL_KINASE_FKx1"
+  uniprot_id: "F1X1A0"
+  indication: "Invasive aspergillosis"
+  mechanism: |
+    Putative fungal kinase. Hyphal growth arrests in CRISPR knockouts in a
+    single replicate. Orthology disagreement among standard databases.
+    Selectivity vs human kinome has not been evaluated. The mechanism is
+    plausible but the evidence pyramid is thin.
+  claim_type: novel_target
+  citation_pmid: "11111111"
+fixture:
+  orthology:       {sources_agreeing: 1, sources_total: 4}
+  expression:      {target_tissue_expressed: true}
+  reproducibility: {retracted: false, rebuttals_count: 0, independent_replications: 1}
+  selectivity:
+    selectivity_data: false
+    off_targets_in_indication_relevant_tissue: false
+    selectivity_index_log: 0.0
