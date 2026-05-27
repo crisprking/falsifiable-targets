@@ -1,0 +1,19 @@
+claim:
+  target_symbol: "OCT4"
+  uniprot_id: "Q01860"
+  indication: "Pluripotent-stem-cell-based regenerative therapy (hypothetical)"
+  mechanism: |
+    Stimulus-Triggered Acquisition of Pluripotency (Obokata, Nature 2014):
+    transient low-pH stress reprograms CD45+ cells. Both primary papers
+    retracted 2014-07-02 after RIKEN misconduct finding.
+  claim_type: extraordinary_claim
+  citation_doi: "10.1038/nature12968"
+fixture:
+  orthology:   {sources_agreeing: 4, sources_total: 4}
+  expression:  {target_tissue_expressed: true}
+  reproducibility:
+    retracted: true
+    retraction_year: 2014
+    rebuttals_count: 5
+    independent_replications: 0
+  selectivity: {selectivity_data: false}

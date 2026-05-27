@@ -1,0 +1,15 @@
+claim:
+  target_symbol: "SAT_PATHOGEN_HOMOLOG_X"
+  uniprot_id: "Q9XYZ1"
+  indication: "Hypothetical pathogen infection (chemistry-series claim)"
+  mechanism: |
+    Vendor pitches 147 ChEMBL actives vs pathogen target X. Audit tests
+    whether they are on-target or redirected human HDAC4 inhibitors.
+  claim_type: chemistry_series
+fixture:
+  chemistry:
+    chembl_distinct_compounds: 147
+    chembl_pfam_class_collapse_fraction: 0.91
+    chembl_pfam_class_collapse_target_symbol: "HDAC4"
+  selectivity:
+    selectivity_data: false

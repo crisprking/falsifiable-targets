@@ -1,0 +1,33 @@
+# KRAS-G12C in non-small cell lung cancer.
+# Mechanism: G12C is a somatic driver mutation. Sotorasib (AMG-510, FDA
+# approved May 2021) and adagrasib (MRTX849, FDA approved Dec 2022) both
+# show responses but with rapid resistance and modest overall-survival
+# benefit. clinical_outcome_contested: true because efficacy is real but
+# limited compared to mechanism-validated expectation.
+claim:
+  target_symbol: "KRAS"
+  uniprot_id: "P01116"
+  indication: "Non-small cell lung cancer (KRAS-G12C-mutant)"
+  mechanism: |
+    KRAS-G12C is a recurrent somatic driver in 13 percent of NSCLC
+    adenocarcinomas. Covalent G12C inhibitors (sotorasib, adagrasib)
+    bind the switch-II pocket of the GDP-bound state. Both approved
+    drugs show 35-45 percent objective response rates but median PFS
+    around 6 months due to rapid emergence of resistance (secondary
+    KRAS mutations, NF1 loss, RTK upregulation).
+  claim_type: validated_mechanism
+  citation_pmid: "32955176"
+fixture:
+  orthology:       {sources_agreeing: 4, sources_total: 4}
+  genetics:
+    gwas_hits: 0
+    mendelian_evidence: false
+    somatic_driver_evidence: true
+    loss_of_function_phenotype: "G12C gain-of-function in NSCLC (TCGA)"
+    clinical_outcome_contested: true
+  expression:      {target_tissue_expressed: true}
+  reproducibility: {retracted: false, rebuttals_count: 0, independent_replications: 200}
+  selectivity:
+    selectivity_data: true
+    off_targets_in_indication_relevant_tissue: false
+    selectivity_index_log: 2.8

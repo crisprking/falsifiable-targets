@@ -1,0 +1,7 @@
+claim:
+  target_symbol: "EGFR"
+  uniprot_id: "P00533"
+  indication: "Non-small cell lung cancer"
+  mechanism: "EGFR activating mutations drive NSCLC."
+fixture:
+  genetics: {somatic_driver_evidence: true}

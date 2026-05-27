@@ -1,0 +1,23 @@
+claim:
+  target_symbol: "BACE1"
+  uniprot_id: "P56817"
+  indication: "Alzheimer disease (mild-to-moderate, symptomatic)"
+  mechanism: |
+    BACE1 cleaves APP at the beta-site. APP A673T (Jonsson 2012) is
+    approximately five-fold protective. Every Phase 3 BACE1 inhibitor
+    trial has failed efficacy or shown cognitive worsening.
+  claim_type: validated_mechanism
+  citation_pmid: "22801501"
+fixture:
+  orthology:       {sources_agreeing: 4, sources_total: 4}
+  genetics:
+    gwas_hits: 6
+    mendelian_evidence: true
+    loss_of_function_phenotype: "APP A673T protective"
+    clinical_outcome_contested: true
+  expression:      {target_tissue_expressed: true}
+  reproducibility: {retracted: false, rebuttals_count: 0, independent_replications: 80}
+  selectivity:
+    selectivity_data: true
+    off_targets_in_indication_relevant_tissue: false
+    selectivity_index_log: 1.5

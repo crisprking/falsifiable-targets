@@ -1,0 +1,23 @@
+claim:
+  target_symbol: "PCSK9"
+  uniprot_id: "Q8NBP7"
+  indication: "Hypercholesterolemia / atherosclerotic cardiovascular disease"
+  mechanism: |
+    PCSK9 binds LDLR on hepatocytes and routes it to lysosomal degradation.
+    LoF variants (R46L, Y142X, C679X; Cohen 2006) lower lifetime LDL-C and
+    reduce CHD 50-88 percent.
+  claim_type: validated_mechanism
+  citation_pmid: "16554528"
+fixture:
+  orthology:       {sources_agreeing: 4, sources_total: 4}
+  genetics:
+    gwas_hits: 31
+    mendelian_evidence: true
+    loss_of_function_phenotype: "LoF carriers protected from CHD (Cohen 2006)"
+    clinical_outcome_contested: false
+  expression:      {target_tissue_expressed: true}
+  reproducibility: {retracted: false, rebuttals_count: 0, independent_replications: 100}
+  selectivity:
+    selectivity_data: true
+    off_targets_in_indication_relevant_tissue: false
+    selectivity_index_log: 3.5

@@ -63,6 +63,10 @@ def main():
         "--json-out", default=None,
         help="Write structured JSON report to this path",
     )
+    parser.add_argument(
+        "--debug", action="store_true",
+        help="Show full tracebacks on error paths (default: one-line stderr)",
+    )
     args = parser.parse_args()
 
     if args.offline:
@@ -77,6 +81,27 @@ def main():
         spec = yaml.safe_load(f)
 
     c = spec["claim"]
+
+    _required = ("target_symbol", "uniprot_id", "indication", "mechanism", "claim_type")
+    _missing = [_f for _f in _required if _f not in c or c[_f] in (None, "")]
+    if _missing:
+        print(f"ERROR: {claim_path}: missing required field(s) under 'claim': "
+              f"{', '.join(_missing)}", file=sys.stderr)
+        return 5
+
+    _valid_types = {"validated_mechanism", "novel_target", "extraordinary_claim",
+                    "chemistry_series", "repurposing"}
+    if c["claim_type"] not in _valid_types:
+        print(f"ERROR: {claim_path}: invalid claim_type "
+              f"{c['claim_type']!r}. Must be one of: {sorted(_valid_types)}",
+              file=sys.stderr)
+        return 5
+
+    if "fixture" in spec and not isinstance(spec["fixture"], dict):
+        print(f"ERROR: {claim_path}: 'fixture' must be a mapping (got "
+              f"{type(spec['fixture']).__name__})", file=sys.stderr)
+        return 5
+
     claim = TargetClaim(
         target_symbol=c["target_symbol"],
         indication=c["indication"],
@@ -251,6 +276,27 @@ def main():
     sys.exit(exit_codes.get(verdict, 99))
 
 
-if __name__ == "__main__":
+def _run():
+    """Entry point with exception-to-exit-code translation."""
     import sys as _sys
-    _sys.exit(main() or 0)
+    debug = "--debug" in _sys.argv
+    try:
+        rc = main()
+        _sys.exit(rc if rc is not None else 0)
+    except SystemExit:
+        raise
+    except KeyboardInterrupt:
+        print("ERROR: interrupted by user", file=_sys.stderr)
+        _sys.exit(130)
+    except Exception as _e:
+        if debug:
+            import traceback as _tb
+            _tb.print_exc()
+        else:
+            print(f"ERROR: {type(_e).__name__}: {_e}", file=_sys.stderr)
+            print("  (re-run with --debug for full traceback)", file=_sys.stderr)
+        _sys.exit(5)
+
+
+if __name__ == "__main__":
+    _run()

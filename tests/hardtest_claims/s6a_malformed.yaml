@@ -1,0 +1,9 @@
+claim:
+  target_symbol: "JAK1 "
+  uniprot_id: "P23458"
+  indication: "Rheumatoid arthritis"
+  mechanism: "JAK1 mediates cytokine signaling."
+  claim_type: validatedmechanism
+fixture:
+  geneticss: {gwas_hits: 12}
+  chemistry: {gwas_hits: 9, chembl_distinct_compounds: 400}
