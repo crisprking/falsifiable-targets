@@ -1,0 +1,77 @@
+{
+  "audit_run_utc": "2026-05-28T01:58:55.463258+00:00",
+  "pre_registration_commit": "264a246",
+  "main_head_at_audit": "264a246d8bbfa9a9552bff0e523a55d91fd7c719",
+  "ruleset_sha256": "35ef2b2ab5363298097962a0b6ae52c70d551a1edddc341054f75cb6e4fb7221",
+  "summary": {
+    "held": 2,
+    "partial": 0,
+    "diverged": 1,
+    "total": 3
+  },
+  "results": [
+    {
+      "stem": "b1_stap_cells_2014_at_submission",
+      "label": "STAP cells at 2014-01-29",
+      "predicted": "FALSIFIED_WITH_CAVEATS or INSUFFICIENT_DATA",
+      "predicted_mech": "no rule fires; R7 substantive caveat expected for extraordinary_claim with no selectivity data",
+      "verdict": "SURVIVED",
+      "exit_code": 0,
+      "score": 0.0,
+      "substantive_caveat_count": 0,
+      "fired_rules": [],
+      "substantive_caveats": [],
+      "abstained_rules": [],
+      "ruleset_sha256": "35ef2b2ab5363298097962a0b6ae52c70d551a1edddc341054f75cb6e4fb7221",
+      "claim_sha256": "707a0e26495d5d656b6113585ad56ed75218417cc157e0ed9d6ac10de5fcef50",
+      "audit_timestamp_utc": "2026-05-28T01:58:55.156533+00:00",
+      "match": "DIVERGED",
+      "report_path_in_repo": "studies/backtest_2026/audit_outputs/b1_stap_cells_2014_at_submission.json"
+    },
+    {
+      "stem": "b2_cetp_torcetrapib_2005_at_submission",
+      "label": "CETP/torcetrapib at 2005-08-24",
+      "predicted": "FALSIFIED_WITH_CAVEATS",
+      "predicted_mech": "R3 substantive caveat via clinical_outcome_contested",
+      "verdict": "FALSIFIED_WITH_CAVEATS",
+      "exit_code": 1,
+      "score": 0.0,
+      "substantive_caveat_count": 1,
+      "fired_rules": [],
+      "substantive_caveats": [
+        {
+          "rule": "R3_genetics_support",
+          "text": "clinical outcome contested; framework does not predict trial outcomes - mechanism validity does not entail clinical efficacy"
+        }
+      ],
+      "abstained_rules": [
+        "R2_chemistry_support"
+      ],
+      "ruleset_sha256": "35ef2b2ab5363298097962a0b6ae52c70d551a1edddc341054f75cb6e4fb7221",
+      "claim_sha256": "1e904be887969649b35ec2c98f57ac7f90f619c93932399bffdc351cbd1cd576",
+      "audit_timestamp_utc": "2026-05-28T01:58:55.288279+00:00",
+      "match": "HELD",
+      "report_path_in_repo": "studies/backtest_2026/audit_outputs/b2_cetp_torcetrapib_2005_at_submission.json"
+    },
+    {
+      "stem": "b6_bace1_alzheimers_2012_at_submission",
+      "label": "BACE1 at 2012-11-01",
+      "predicted": "SURVIVED",
+      "predicted_mech": "no rule fires \u2014 calibration anchor",
+      "verdict": "SURVIVED",
+      "exit_code": 0,
+      "score": 0.0,
+      "substantive_caveat_count": 0,
+      "fired_rules": [],
+      "substantive_caveats": [],
+      "abstained_rules": [
+        "R2_chemistry_support"
+      ],
+      "ruleset_sha256": "35ef2b2ab5363298097962a0b6ae52c70d551a1edddc341054f75cb6e4fb7221",
+      "claim_sha256": "3b40faefe54eff8314c4b274eaec3b02e822dc8bef29385254e7d1c80a9d6256",
+      "audit_timestamp_utc": "2026-05-28T01:58:55.434622+00:00",
+      "match": "HELD",
+      "report_path_in_repo": "studies/backtest_2026/audit_outputs/b6_bace1_alzheimers_2012_at_submission.json"
+    }
+  ]
+}
