@@ -1,0 +1,51 @@
+# B6: BACE1 inhibitor (verubecestat), as-of November 2012
+# Cutoff: 2012-11-01. EPOCH Phase 3 (NCT01739348) began enrollment Nov 2012.
+#
+# This is the central methodological case: at this moment in time, NO BACE1
+# Phase 3 had failed. The strongest target-validation paper imaginable
+# (APP A673T protective) had been published 3 months earlier. A reasonable
+# researcher at Nov 2012 had no public reason to falsify the claim.
+#
+# Cited evidence at cutoff:
+#   - Jonsson et al, Nature 488:96-99 (PMID 22801501, Aug 2 2012):
+#     APP A673T variant reduces beta-secretase cleavage ~40 percent and
+#     confers ~5x protection against AD. Mendelian human evidence.
+#   - Vassar et al, Science 286:735-741 (PMID 10531052, 1999): original
+#     BACE1 identification.
+#   - Standard literature on amyloid cascade hypothesis circa 2012.
+#
+# Prediction: SURVIVED. This is the calibration anchor. The framework should
+# NOT predict the Phase 3 failures of 2017-2019 from 2012 evidence.
+claim:
+  target_symbol: "BACE1"
+  uniprot_id: "P56817"
+  indication: "Alzheimer's disease (mild-to-moderate, symptomatic)"
+  mechanism: |
+    BACE1 (beta-secretase 1) cleaves APP at the beta-site to generate the
+    N-terminus of Abeta. APP A673T (Jonsson et al, Nature 2012,
+    PMID 22801501), published three months before EPOCH Phase 3 enrollment
+    began, reduces beta-cleavage by ~40 percent and confers ~5x protection
+    against AD. This is the strongest Mendelian evidence linking BACE1
+    activity to AD risk in humans available in 2012.
+  claim_type: validated_mechanism
+  citation_pmid: "22801501"
+  as_of_date: "2012-11-01"
+fixture:
+  orthology:
+    sources_agreeing: 4
+    sources_total: 4
+  genetics:
+    gwas_hits: 6
+    mendelian_evidence: true
+    loss_of_function_phenotype: "APP A673T (reduces BACE1 substrate cleavage) is protective; Jonsson 2012"
+    clinical_outcome_contested: false
+  expression:
+    target_tissue_expressed: true
+  reproducibility:
+    retracted: false
+    rebuttals_count: 0
+    independent_replications: 50
+  selectivity:
+    selectivity_data: true
+    off_targets_in_indication_relevant_tissue: false
+    selectivity_index_log: 1.5

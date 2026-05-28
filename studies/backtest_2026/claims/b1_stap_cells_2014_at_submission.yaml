@@ -1,0 +1,38 @@
+# B1: STAP cells (Obokata et al, Nature 2014)
+# At-submission audit. Cutoff: 2014-01-29, day before Nature publication.
+#
+# Critical discipline: this YAML must NOT include retraction (retracted: false)
+# or the rebuttals that emerged Feb 15 onward. At this moment in time,
+# neither Obokata nor any reviewer had retracted; no replication had failed
+# publicly. The framework must work without those later signals.
+#
+# Cited evidence at cutoff:
+#   - Obokata et al, Nature 505:641-647 (PMID 24476887, published Jan 30 2014;
+#     paper available to reviewers before this).
+#   - Yamanaka iPSC mechanism (Takahashi & Yamanaka 2006, PMID 16904174) is
+#     the prior art that makes STAP "extraordinary" rather than incremental.
+claim:
+  target_symbol: "OCT4"
+  uniprot_id: "Q01860"
+  indication: "Pluripotent stem cell generation (regenerative medicine)"
+  mechanism: |
+    Obokata et al claim a novel reprogramming method: transient low-pH stress
+    converts CD45+ somatic cells to pluripotency without genetic intervention
+    (Nature, Jan 30 2014). Mechanism distinct from Yamanaka factor reprogramming
+    (Takahashi & Yamanaka 2006). Extraordinary claim by the biology of the era;
+    no prior literature on stress-induced reprogramming at this level.
+  claim_type: extraordinary_claim
+  citation_doi: "10.1038/nature12968"
+  as_of_date: "2014-01-29"
+fixture:
+  orthology:
+    sources_agreeing: 4
+    sources_total: 4
+  expression:
+    target_tissue_expressed: true
+  reproducibility:
+    retracted: false
+    rebuttals_count: 0
+    independent_replications: 0
+  selectivity:
+    selectivity_data: false
