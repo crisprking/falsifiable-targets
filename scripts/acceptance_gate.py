@@ -60,7 +60,9 @@ def main():
     sep = "=" * 80
 
     # ---- C1: verdict + exit code ----
-    print(sep); print("CONTRACT 1: verdict + exit-code"); print(sep)
+    print(sep)
+    print("CONTRACT 1: verdict + exit-code")
+    print(sep)
     for cf, (wv, we) in VERDICT_CONTRACTS.items():
         p = CLAIMS / cf
         j = REPORTS / f"{p.stem}.json"
@@ -76,7 +78,9 @@ def main():
             failures.append(("verdict", cf, gv, r.returncode))
 
     # ---- C2: error paths ----
-    print("\n" + sep); print("CONTRACT 2: error paths exit 5, no tracebacks"); print(sep)
+    print("\n" + sep)
+    print("CONTRACT 2: error paths exit 5, no tracebacks")
+    print(sep)
     for cf in ERROR_CONTRACTS:
         p = CLAIMS / cf
         if not p.exists():
@@ -91,7 +95,9 @@ def main():
             failures.append(("error_exit", cf))
 
     # ---- C3: ruleset SHA pinned ----
-    print("\n" + sep); print("CONTRACT 3: ruleset SHA pinned"); print(sep)
+    print("\n" + sep)
+    print("CONTRACT 3: ruleset SHA pinned")
+    print(sep)
     drift = False
     for cf in VERDICT_CONTRACTS:
         j = REPORTS / f"{Path(cf).stem}.json"
@@ -106,15 +112,20 @@ def main():
         print(f"  [OK  ]  all pinned to {EXPECTED_RULESET_SHA[:16]}...")
 
     # ---- C4: determinism ----
-    print("\n" + sep); print("CONTRACT 4: determinism"); print(sep)
+    print("\n" + sep)
+    print("CONTRACT 4: determinism")
+    print(sep)
     s1 = CLAIMS / "s1_pcsk9_hypercholesterolemia.yaml"
     if s1.exists():
         ja, jb = REPORTS / "_det_a.json", REPORTS / "_det_b.json"
         audit(s1, json_out=ja)
         audit(s1, json_out=jb)
-        a = json.loads(ja.read_text()); b = json.loads(jb.read_text())
-        a.pop("audit_timestamp_utc", None); b.pop("audit_timestamp_utc", None)
-        ca, cb = json.dumps(a, sort_keys=True), json.dumps(b, sort_keys=True)
+        a = json.loads(ja.read_text())
+        b = json.loads(jb.read_text())
+        a.pop("audit_timestamp_utc", None)
+        b.pop("audit_timestamp_utc", None)
+        ca = json.dumps(a, sort_keys=True)
+        cb = json.dumps(b, sort_keys=True)
         ok = ca == cb
         sha = hashlib.sha256(ca.encode()).hexdigest()[:16]
         print(f"  [{'OK  ' if ok else 'FAIL'}]  identical={ok}  payload_sha={sha}")
@@ -124,7 +135,9 @@ def main():
         print("  [SKIP]  s1 claim not found")
 
     # ---- C5: --debug flag ----
-    print("\n" + sep); print("CONTRACT 5: --debug accepted and behaves"); print(sep)
+    print("\n" + sep)
+    print("CONTRACT 5: --debug accepted and behaves")
+    print(sep)
     s6a = CLAIMS / "s6a_malformed.yaml"
     if s6a.exists():
         r_plain = audit(s6a)
@@ -134,13 +147,17 @@ def main():
         print(f"  [{'OK  ' if accepted else 'FAIL'}]  --debug accepted by argparse")
         print(f"  [{'OK  ' if consistent else 'FAIL'}]  --debug preserves exit "
               f"(plain={r_plain.returncode}, debug={r_debug.returncode})")
-        if not accepted: failures.append(("debug_not_accepted",))
-        if not consistent: failures.append(("debug_breaks_exit",))
+        if not accepted:
+            failures.append(("debug_not_accepted",))
+        if not consistent:
+            failures.append(("debug_breaks_exit",))
     else:
         print("  [SKIP]  s6a claim not found")
 
     # ---- C6: substantive caveats surfaced ----
-    print("\n" + sep); print("CONTRACT 6: substantive caveats surfaced"); print(sep)
+    print("\n" + sep)
+    print("CONTRACT 6: substantive caveats surfaced")
+    print(sep)
     for cf in ["s2_bace1_alzheimers.json", "s5_novel_pathogen_weak.json"]:
         j = REPORTS / cf
         if not j.exists():
