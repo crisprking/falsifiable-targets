@@ -92,7 +92,7 @@ def audit_one(claim_path: Path, reports_dir: Path, ft_root: Path) -> dict:
 
     if r.returncode == 5 or not out_json.exists():
         err_lines = r.stderr.strip().splitlines() if r.stderr.strip() else ["unknown error"]
-        err = next((l for l in err_lines if l.startswith("ERROR:")), err_lines[-1])
+        err = next((line for line in err_lines if line.startswith("ERROR:")), err_lines[-1])
         return {
             "claim_file":   claim_path.name,
             "target":       "(unparsed)",

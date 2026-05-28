@@ -7,19 +7,17 @@ If these tests fail, do not release: a clean install (Kaggle, Colab,
 fresh CI) will fail with FileNotFoundError at runtime even though
 `pip install` succeeded.
 """
+
 from __future__ import annotations
 
-import shutil
 import subprocess
 import sys
-import tempfile
 from pathlib import Path
 
 import pytest
 
-
-REPO_ROOT = Path(__file__).parent.parent
-
+ROOT = Path(__file__).resolve().parent.parent
+REPO_ROOT = ROOT  # back-compat alias for existing test bodies
 
 def _has_isolated_build() -> bool:
     """Whether the environment can `python -m build` cleanly."""
