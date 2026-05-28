@@ -1,0 +1,56 @@
+# B2: CETP inhibitor (torcetrapib), as-of August 2005
+# Cutoff: 2005-08-24, registration date of ILLUMINATE Phase 3 (NCT00134264).
+#
+# Why this cutoff: this is the date Pfizer publicly committed to Phase 3.
+# Any reasonable researcher considering CETP at that moment had access to:
+#
+# Cited evidence at cutoff:
+#   - Boekholdt et al, Circulation 111:278-287 (PMID 15655129, Jan 25 2005):
+#     individual-patient meta-analysis of 13,677 subjects across 10 studies.
+#     TaqIB associates with HDL-C but the title explicitly notes effects on
+#     cardiovascular outcome are not consistently observed.
+#   - de Grooth et al, JACC 43:854-857 (PMID 14998629, Mar 2004): titled
+#     "no interaction with the response to pravastatin therapy and no
+#     effects on cardiovascular outcome" — explicit null on CV outcome.
+#   - Clark et al, ATVB 24:490-497 (PMID 14988090, Mar 2004): torcetrapib
+#     human dosing study, HDL-C raised 60-100%.
+#
+# Note for methodology readers: "clinical_outcome_contested: true" here is
+# justified by the verbatim language of Boekholdt 2005 and de Grooth 2004
+# being null on CV outcome despite confirming the HDL biomarker effect.
+# This is the at-2005 wording, not retrospective re-labeling.
+claim:
+  target_symbol: "CETP"
+  uniprot_id: "P11597"
+  indication: "Cardiovascular disease (statin add-on, secondary prevention)"
+  mechanism: |
+    CETP transfers cholesteryl esters from HDL to apoB-containing
+    lipoproteins. Inhibition raises HDL-C 60-100 percent and lowers LDL-C
+    ~20 percent in human dosing (Clark 2004 ATVB, PMID 14988090). The HDL-CV
+    epidemiologic association is strong. The CETP Mendelian evidence is
+    however contested as of 2005: Boekholdt 2005 IPD meta-analysis of
+    13,677 subjects (PMID 15655129) and de Grooth 2004 (PMID 14998629) are
+    both null on cardiovascular outcome for the TaqIB variant, despite the
+    same variant showing the expected HDL-C effect.
+  claim_type: validated_mechanism
+  citation_pmid: "15655129"
+  as_of_date: "2005-08-24"
+fixture:
+  orthology:
+    sources_agreeing: 4
+    sources_total: 4
+  genetics:
+    gwas_hits: 3
+    mendelian_evidence: true
+    loss_of_function_phenotype: "TaqIB B2 associated with higher HDL-C; CV outcome null in Boekholdt 2005 and de Grooth 2004"
+    clinical_outcome_contested: true
+  expression:
+    target_tissue_expressed: true
+  reproducibility:
+    retracted: false
+    rebuttals_count: 0
+    independent_replications: 40
+  selectivity:
+    selectivity_data: true
+    off_targets_in_indication_relevant_tissue: false
+    selectivity_index_log: 2.5
