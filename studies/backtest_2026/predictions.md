@@ -30,7 +30,7 @@ a separate commit in a separate PR; the git log proves the order.
 
 - **Predicted verdict:** FALSIFIED_WITH_CAVEATS via R3.
 - **Predicted cheapest falsifier:** R3 caveat — clinical_outcome_contested,
-  given Boekholdt 2005 and de Grooth 2004 null on CV outcome.
+  given conflicting human genetics in 2004-2005: Boekholdt 2005 (IPD meta-analysis, n=13,677) found the TaqIB variant ASSOCIATED with reduced CAD risk via HDL; de Grooth 2004 (CARE cohort) found the variant did NOT predict cardiovascular events. The conflict is what justifies clinical_outcome_contested.
 - **Confidence:** medium-high.
 - **Why this matters:** if this holds, the framework would have flagged a
   Phase 3 program pharma later spent ~$1B on, using only evidence available
