@@ -80,35 +80,52 @@ jobs:
 
       - name: Reproduce HMGCR example audit (offline)
         run: |
-          ft-audit claims/example_hmgcr_statin.yaml --no-live --json-out /tmp/hmgcr.json
-          python -c "
-          import json, sys
-          r = json.load(open('/tmp/hmgcr.json'))
-          assert r['verdict'] == 'SURVIVED', f'expected SURVIVED, got {r[\"verdict\"]}'
-          assert r['ruleset_sha256'] == '35ef2b2ab5363298097962a0b6ae52c70d551a1edddc341054f75cb6e4fb7221', f'SHA drift: {r[\"ruleset_sha256\"]}'
-          print('OK: HMGCR audit reproduces; ruleset SHA stable')
-          "
+          python - <<'PY'
+          import json, subprocess, sys
+          r = subprocess.run(
+              [sys.executable, "-m", "run_audit", "claims/example_hmgcr_statin.yaml",
+               "--no-live", "--json-out", "/tmp/hmgcr.json"],
+              check=False,
+          )
+          assert r.returncode == 0, f"expected exit 0 (SURVIVED), got {r.returncode}"
+          d = json.load(open("/tmp/hmgcr.json"))
+          assert d["verdict"] == "SURVIVED", f"expected SURVIVED, got {d['verdict']}"
+          assert d["ruleset_sha256"] == "35ef2b2ab5363298097962a0b6ae52c70d551a1edddc341054f75cb6e4fb7221", (
+              f"SHA drift: {d['ruleset_sha256']}"
+          )
+          print("OK: HMGCR -> SURVIVED, exit 0, ruleset SHA stable")
+          PY
 
       - name: Reproduce Ipi1 audit (offline)
         run: |
-          ft-audit claims/ipi1_madurella.yaml --no-live --json-out /tmp/ipi1.json
-          python -c "
-          import json
-          r = json.load(open('/tmp/ipi1.json'))
-          assert r['verdict'] == 'FALSIFIED_WITH_CAVEATS', f'expected FALSIFIED_WITH_CAVEATS, got {r[\"verdict\"]}'
-          assert r['substantive_caveat_count'] == 2, f'expected 2 substantive caveats, got {r[\"substantive_caveat_count\"]}'
-          print('OK: Ipi1 audit reproduces under v1.2.0 ruleset')
-          "
+          python - <<'PY'
+          import json, subprocess, sys
+          r = subprocess.run(
+              [sys.executable, "-m", "run_audit", "claims/ipi1_madurella.yaml",
+               "--no-live", "--json-out", "/tmp/ipi1.json"],
+              check=False,
+          )
+          assert r.returncode == 1, f"expected exit 1 (FALSIFIED_WITH_CAVEATS), got {r.returncode}"
+          d = json.load(open("/tmp/ipi1.json"))
+          assert d["verdict"] == "FALSIFIED_WITH_CAVEATS", f"got {d['verdict']}"
+          assert d["substantive_caveat_count"] == 2, f"got {d['substantive_caveat_count']} caveats"
+          print("OK: Ipi1 -> FALSIFIED_WITH_CAVEATS, exit 1, 2 substantive caveats")
+          PY
 
       - name: Reproduce TYK2 audit (offline)
         run: |
-          ft-audit claims/tyk2_psoriasis.yaml --no-live --json-out /tmp/tyk2.json
-          python -c "
-          import json
-          r = json.load(open('/tmp/tyk2.json'))
-          assert r['verdict'] == 'SURVIVED', f'expected SURVIVED, got {r[\"verdict\"]}'
-          print('OK: TYK2 audit reproduces under v1.2.0 ruleset')
-          "
+          python - <<'PY'
+          import json, subprocess, sys
+          r = subprocess.run(
+              [sys.executable, "-m", "run_audit", "claims/tyk2_psoriasis.yaml",
+               "--no-live", "--json-out", "/tmp/tyk2.json"],
+              check=False,
+          )
+          assert r.returncode == 0, f"expected exit 0 (SURVIVED), got {r.returncode}"
+          d = json.load(open("/tmp/tyk2.json"))
+          assert d["verdict"] == "SURVIVED", f"got {d['verdict']}"
+          print("OK: TYK2 -> SURVIVED, exit 0")
+          PY
 
   lint:
     name: Lint
