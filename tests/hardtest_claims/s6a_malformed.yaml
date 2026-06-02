@@ -1,0 +1,7 @@
+# Validator stress: invalid claim_type enum (typo "validatedmechanism")
+claim:
+  target_symbol: "TEST_BAD_ENUM"
+  uniprot_id: "X0X0X0"
+  indication: "test"
+  mechanism: "test"
+  claim_type: validatedmechanism

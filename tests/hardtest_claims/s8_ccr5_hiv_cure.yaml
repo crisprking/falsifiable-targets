@@ -1,0 +1,30 @@
+# CCR5 as HIV entry cofactor; gene-editing cure via CCR5 ablation.
+# Tests an extraordinary_claim that SHOULD survive because the evidence
+# matches the bar: human Mendelian protection + 2+ confirmed cures.
+claim:
+  target_symbol: "CCR5"
+  uniprot_id: "P51681"
+  indication: "HIV-1 chronic infection (functional cure via CCR5 ablation)"
+  mechanism: |
+    CCR5 is the dominant co-receptor for R5-tropic HIV-1 entry.
+    CCR5-delta32 homozygotes (Liu 1996, PMID 8674119) lack functional
+    surface CCR5 and are protected from HIV-1 infection. Two confirmed
+    cures after allogeneic stem-cell transplant from CCR5-delta32 donors:
+    Berlin patient (Hutter 2009, PMID 19213682) and London patient
+    (Gupta 2019, PMID 30836379). Multiple subsequent cures via the same
+    mechanism.
+  claim_type: extraordinary_claim
+  citation_pmid: "19213682"
+fixture:
+  orthology:       {sources_agreeing: 4, sources_total: 4}
+  genetics:
+    gwas_hits: 8
+    mendelian_evidence: true
+    loss_of_function_phenotype: "delta32 homozygotes HIV-1 resistant"
+    clinical_outcome_contested: false
+  expression:      {target_tissue_expressed: true}
+  reproducibility: {retracted: false, rebuttals_count: 0, independent_replications: 50}
+  selectivity:
+    selectivity_data: true
+    off_targets_in_indication_relevant_tissue: false
+    selectivity_index_log: 3.0

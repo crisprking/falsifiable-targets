@@ -1,0 +1,324 @@
+"""
+Run an audit on a claim YAML using the live + fixture composite adapter.
+
+Usage:
+    python -m run_audit claims/tyk2_psoriasis.yaml
+    python -m run_audit claims/tyk2_psoriasis.yaml --offline
+
+The --offline flag is for hermetic testing: forces the live adapters to
+serve from .ae_cache/ only, matching what AE_OFFLINE=1 would do globally.
+"""
+from __future__ import annotations
+
+import argparse
+import hashlib
+import json
+import os
+import sys
+from datetime import datetime, timezone
+from pathlib import Path
+
+import yaml
+
+
+def _ruleset_sha(rules, version):
+    descriptor = {
+        "version": version,
+        "rules": [
+            {"rule_id": r.rule_id, "version": r.version, "description": r.description}
+            for r in sorted(rules, key=lambda x: x.rule_id)
+        ],
+    }
+    canon = json.dumps(descriptor, sort_keys=True, separators=(",", ":"))
+    return hashlib.sha256(canon.encode()).hexdigest()
+
+
+def _claim_sha(claim):
+    canon = json.dumps(
+        {
+            "target_symbol": claim.target_symbol,
+            "uniprot_id": claim.uniprot_id,
+            "indication": claim.indication,
+            "mechanism": claim.mechanism,
+            "claim_type": claim.claim_type.value,
+        },
+        sort_keys=True,
+        separators=(",", ":"),
+    )
+    return hashlib.sha256(canon.encode()).hexdigest()
+
+
+def main():
+    parser = argparse.ArgumentParser()
+    parser.add_argument("claim_path", help="Path to claim YAML")
+    parser.add_argument(
+        "--offline", action="store_true",
+        help="Force adapters to serve from cache only (hermetic mode)",
+    )
+    parser.add_argument(
+        "--no-live", action="store_true",
+        help="Skip live adapters entirely (fixture only)",
+    )
+    parser.add_argument(
+        "--json-out", default=None,
+        help="Write structured JSON report to this path",
+    )
+    parser.add_argument(
+        "--debug", action="store_true",
+        help="Show full tracebacks on unhandled errors (default: one-line stderr)",
+    )
+    args = parser.parse_args()
+
+    if args.offline:
+        os.environ["AE_OFFLINE"] = "1"
+
+    # Local imports so the env var is set before adapter import
+    from adapters import FixtureAdapter, default_composite, load_paralog_map
+    from smoke_test import RULES, ClaimType, RuleStatus, TargetClaim, aggregate
+
+    claim_path = Path(args.claim_path)
+    if not claim_path.exists():
+        print(f"ERROR: claim file not found: {claim_path}", file=sys.stderr)
+        return 5
+
+    # v1.4.2: pre-validate input before pushing into the rule engine.
+    try:
+        with open(claim_path) as f:
+            raw = f.read()
+        if not raw.strip():
+            print(f"ERROR: claim file is empty: {claim_path}", file=sys.stderr)
+            return 5
+        spec = yaml.safe_load(raw)
+    except yaml.YAMLError as e:
+        print(f"ERROR: YAML parse error in {claim_path}:", file=sys.stderr)
+        print(f"  {e}", file=sys.stderr)
+        return 5
+
+    if not isinstance(spec, dict) or "claim" not in spec:
+        print(f"ERROR: {claim_path} does not contain a 'claim' top-level key",
+              file=sys.stderr)
+        return 5
+
+    c = spec["claim"]
+    if not isinstance(c, dict):
+        print(f"ERROR: 'claim' in {claim_path} is not a mapping", file=sys.stderr)
+        return 5
+
+    required = {"target_symbol", "indication", "mechanism", "claim_type"}
+    missing = required - set(c.keys())
+    if missing:
+        print(f"ERROR: {claim_path} missing required claim fields: "
+              f"{sorted(missing)}", file=sys.stderr)
+        return 5
+
+    try:
+        claim_type_enum = ClaimType(c["claim_type"])
+    except ValueError:
+        valid = [ct.value for ct in ClaimType]
+        print(f"ERROR: invalid claim_type {c['claim_type']!r} in {claim_path}. "
+              f"Valid: {valid}", file=sys.stderr)
+        return 5
+
+    claim = TargetClaim(
+        target_symbol=c["target_symbol"],
+        indication=c["indication"],
+        mechanism=c["mechanism"],
+        claim_type=claim_type_enum,
+        uniprot_id=c.get("uniprot_id"),
+    )
+
+    fixture = spec.get("fixture", {})
+
+    # Load paralog map (used by ChEMBLAdapter for R6 v1.2.0+ heuristic)
+    paralog_map_path = claim_path.parent / "paralog_map.yaml"
+    paralog_map = load_paralog_map(paralog_map_path)
+
+    # Build adapter
+    if args.no_live:
+        adapter = FixtureAdapter(fixture)
+        adapter_mode = "fixture-only"
+    else:
+        adapter = default_composite(fixture, use_live=True, paralog_map=paralog_map)
+        adapter_mode = "live+fixture composite" + (" (offline cache)" if args.offline else "")
+
+    # Walk rules manually so we can capture per-rule input data
+    results = []
+    rule_inputs = {}
+    for rule in RULES:
+        if not rule.applies_to(claim):
+            from smoke_test import RuleResult
+            results.append(RuleResult(rule.rule_id, RuleStatus.NOT_APPLICABLE, 0.0))
+            continue
+        # Snapshot the data each rule sees, for the report
+        if rule.rule_id == "R1_orthology":
+            rule_inputs[rule.rule_id] = adapter.get("orthology", claim)
+        elif rule.rule_id in ("R2_chemistry_support", "R6_chemistry_class_collapse"):
+            rule_inputs[rule.rule_id] = adapter.get("chemistry", claim)
+        elif rule.rule_id == "R3_genetics_support":
+            rule_inputs[rule.rule_id] = adapter.get("genetics", claim)
+        elif rule.rule_id == "R4_expression":
+            rule_inputs[rule.rule_id] = adapter.get("expression", claim)
+        elif rule.rule_id == "R5_replication":
+            rule_inputs[rule.rule_id] = adapter.get("reproducibility", claim)
+        elif rule.rule_id == "R7_selectivity_counterscreen":
+            rule_inputs[rule.rule_id] = adapter.get("selectivity", claim)
+        results.append(rule.evaluate(claim, adapter))
+
+    verdict, score, cheapest, substantive, operational = aggregate(results)
+
+    # Compute deterministic stamps
+    ruleset_sha = _ruleset_sha(RULES, "1.2.0")
+    claim_sha = _claim_sha(claim)
+    audit_ts = datetime.now(timezone.utc).isoformat()
+
+    # Console output
+    print("=" * 72)
+    print(f"Audit: {claim.target_symbol}  [{claim.indication}]")
+    print(f"Claim type: {claim.claim_type.value}")
+    print(f"Adapter:    {adapter_mode}")
+    print(f"Ruleset:    v1.2.0  ({ruleset_sha[:16]}...)")
+    print(f"Claim SHA:  {claim_sha[:16]}...")
+    print(f"Timestamp:  {audit_ts}")
+    print("=" * 72)
+    print(f"\nVERDICT: {verdict.value}")
+    print(f"Score:   {score:.2f}  ({len([r for r in results if r.status == RuleStatus.FALSIFIED])} falsified / {len([r for r in results if r.status != RuleStatus.NOT_APPLICABLE])} applicable)")
+    if cheapest:
+        print(f"Cheapest falsification: {cheapest[2]} @ {cheapest[1].value}")
+        print(f"  Experiment: {cheapest[0]}")
+
+    print("\nPer-rule results:")
+    for r in results:
+        status_str = r.status.value.upper().ljust(15)
+        print(f"  {r.rule_id:35} {status_str} conf={r.confidence}")
+        if r.rule_id in rule_inputs and rule_inputs[r.rule_id]:
+            data = rule_inputs[r.rule_id]
+            data_str = ", ".join(f"{k}={v!r}" for k, v in list(data.items())[:4])
+            if len(data) > 4:
+                data_str += f", ... +{len(data) - 4} more"
+            print(f"  {'':35}   input: {data_str}")
+
+    print(f"\nSubstantive caveats ({len(substantive)}):")
+    if not substantive:
+        print("  (none)")
+    for cav in substantive:
+        print(f"  - [{cav.rule_id}] {cav.text}")
+
+    print(f"\nOperational notes ({len(operational)}):")
+    if not operational:
+        print("  (none)")
+    for cav in operational:
+        print(f"  - [{cav.rule_id}] {cav.text}")
+
+    # JSON report
+    # Build adapter inventory for reproducibility metadata
+    if isinstance(adapter, FixtureAdapter):
+        adapter_inventory = [{"name": "FixtureAdapter", "live": False}]
+    else:
+        # CompositeAdapter case: list its constituent adapters
+        adapter_inventory = []
+        for sub in getattr(adapter, "_adapters", [adapter]):
+            adapter_inventory.append({
+                "name": type(sub).__name__,
+                "live": not isinstance(sub, FixtureAdapter),
+            })
+
+    # Tool version (single source of truth)
+    try:
+        from _version import __version__ as tool_version
+    except ImportError:
+        tool_version = "unknown"
+    import platform
+
+    report = {
+        "schema_version": "1.1",
+        "audit_timestamp_utc": audit_ts,
+        "tool": {
+            "name": "falsifiable-targets",
+            "version": tool_version,
+            "python_version": platform.python_version(),
+        },
+        "ruleset_version": "1.2.0",
+        "ruleset_sha256": ruleset_sha,
+        "claim": {
+            "target_symbol": claim.target_symbol,
+            "uniprot_id": claim.uniprot_id,
+            "indication": claim.indication,
+            "claim_type": claim.claim_type.value,
+            "claim_sha256": claim_sha,
+        },
+        "adapter_inventory": adapter_inventory,
+        "verdict": verdict.value,
+        "score": score,
+        "cheapest_falsification": (
+            {
+                "rule_id": cheapest[2],
+                "tier": cheapest[1].value,
+                "experiment": cheapest[0],
+            } if cheapest else None
+        ),
+        "per_rule": [
+            {
+                "rule_id": r.rule_id,
+                "status": r.status.value,
+                "confidence": r.confidence,
+                "input_data": rule_inputs.get(r.rule_id, {}),
+                "evidence": r.evidence,
+                "falsification_tier": r.falsification_tier.value if r.falsification_tier else None,
+                "falsification_experiment": r.falsification_experiment,
+                "caveats": [
+                    {"kind": c.kind.value, "text": c.text}
+                    for c in r.caveats
+                ],
+            }
+            for r in results
+        ],
+        "substantive_caveat_count": len(substantive),
+        "operational_note_count": len(operational),
+        "adapter_mode": adapter_mode,
+    }
+
+    if args.json_out:
+        Path(args.json_out).write_text(json.dumps(report, indent=2))
+        print(f"\nJSON report written to: {args.json_out}")
+
+    # Exit code reflects verdict for CI use:
+    # 0 = SURVIVED, 1 = FALSIFIED_WITH_CAVEATS, 2 = FALSIFIED, 3 = INSUFFICIENT_DATA
+    from smoke_test import Verdict
+    exit_codes = {
+        Verdict.SURVIVED: 0,
+        Verdict.FALSIFIED_WITH_CAVEATS: 1,
+        Verdict.FALSIFIED: 2,
+        Verdict.INSUFFICIENT_DATA: 3,
+    }
+    sys.exit(exit_codes.get(verdict, 99))
+
+
+def _run():
+    """Entry point with exception-to-exit-code translation.
+
+    Verdict-based exits (0/1/2/3) come from ``sys.exit()`` inside ``main()``,
+    which raises ``SystemExit`` and propagates cleanly. Error-path returns of
+    5 from ``main()`` are honored. Any other unhandled exception becomes exit
+    5 with a one-line message (or full traceback if ``--debug`` is set).
+    """
+    debug = "--debug" in sys.argv
+    try:
+        rc = main()
+        sys.exit(rc if rc is not None else 0)
+    except SystemExit:
+        raise
+    except KeyboardInterrupt:
+        print("ERROR: interrupted by user", file=sys.stderr)
+        sys.exit(130)
+    except Exception as e:
+        if debug:
+            import traceback
+            traceback.print_exc()
+        else:
+            print(f"ERROR: {type(e).__name__}: {e}", file=sys.stderr)
+            print("  (re-run with --debug for full traceback)", file=sys.stderr)
+        sys.exit(5)
+
+
+if __name__ == "__main__":
+    _run()

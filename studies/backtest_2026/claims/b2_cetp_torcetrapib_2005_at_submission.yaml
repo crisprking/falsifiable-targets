@@ -1,0 +1,60 @@
+# B2: CETP inhibitor (torcetrapib), as-of August 2005
+# Cutoff: 2005-08-24, registration date of ILLUMINATE Phase 3 (NCT00134264).
+#
+# Why this cutoff: this is the date Pfizer publicly committed to Phase 3.
+# Any reasonable researcher considering CETP at that moment had access to:
+#
+# Cited evidence at cutoff:
+#   - Boekholdt et al, Circulation 111:278-287 (PMID 15655129, Jan 25 2005):
+#     individual-patient meta-analysis of 13,677 subjects across 10 studies.
+#     Boekholdt found TaqIB B2 associated with HDL-C AND with reduced CAD
+#     risk (OR 0.78), mediated through HDL — i.e. protective, not null.
+#     Included as the "supports mechanism" side of the conflicting evidence.
+#   - de Grooth et al, JACC 43:854-857 (PMID 14998629, Mar 2004): titled
+#     "no interaction with the response to pravastatin therapy and no
+#     effects on cardiovascular outcome" — explicit null on CV outcome.
+#   - Clark et al, ATVB 24:490-497 (PMID 14988090, Mar 2004): torcetrapib
+#     human dosing study, HDL-C raised 60-100%.
+#
+# Note for methodology readers: "clinical_outcome_contested: true" here is
+# justified by the genuine conflict between de Grooth 2004 (null on CV
+# outcome in CARE) and Boekholdt 2005 (protective CAD association in the
+# IPD meta-analysis). The contemporaneous human genetics were CONTESTED,
+# not uniformly null. This is the at-2005 state, not retrospective relabeling.
+claim:
+  target_symbol: "CETP"
+  uniprot_id: "P11597"
+  indication: "Cardiovascular disease (statin add-on, secondary prevention)"
+  mechanism: |
+    CETP transfers cholesteryl esters from HDL to apoB-containing
+    lipoproteins. Inhibition raises HDL-C 60-100 percent and lowers LDL-C
+    ~20 percent in human dosing (Clark 2004 ATVB, PMID 14988090). The HDL-CV
+    epidemiologic association is strong. The CETP Mendelian evidence is
+    however contested as of 2005: de Grooth 2004 (PMID 14998629, CARE)
+    found the TaqIB variant did NOT predict cardiovascular events, while
+    Boekholdt 2005 (PMID 15655129, IPD meta-analysis of 13,677 subjects)
+    found the OPPOSITE — that the variant WAS associated with reduced CAD
+    risk via HDL. Two serious analyses, flatly disagreeing on whether the
+    mechanism reached outcomes.
+  claim_type: validated_mechanism
+  citation_pmid: "15655129"
+  as_of_date: "2005-08-24"
+fixture:
+  orthology:
+    sources_agreeing: 4
+    sources_total: 4
+  genetics:
+    gwas_hits: 3
+    mendelian_evidence: true
+    loss_of_function_phenotype: "TaqIB B2 associated with higher HDL-C; CV outcome CONTESTED — protective in Boekholdt 2005, null in de Grooth 2004"
+    clinical_outcome_contested: true
+  expression:
+    target_tissue_expressed: true
+  reproducibility:
+    retracted: false
+    rebuttals_count: 0
+    independent_replications: 40
+  selectivity:
+    selectivity_data: true
+    off_targets_in_indication_relevant_tissue: false
+    selectivity_index_log: 2.5

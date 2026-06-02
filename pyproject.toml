@@ -1,0 +1,143 @@
+# falsifiable-targets / pyproject.toml
+#
+# Install from a clone:        pip install -e .
+# Install with validation:     pip install -e ".[validate]"
+# Install with dev tools:      pip install -e ".[dev]"
+# Install everything:          pip install -e ".[all]"
+#
+# Once on PyPI:                pip install falsifiable-targets
+#
+# CLI is `ft-audit`. Example:  ft-audit claims/tyk2_psoriasis.yaml --no-live
+
+[build-system]
+requires = ["setuptools>=68", "wheel"]
+build-backend = "setuptools.build_meta"
+
+[project]
+name = "falsifiable-targets"
+dynamic = ["version"]
+description = "Deterministic, SHA-locked target-validation audit framework. Run a claim through seven rules; get a verdict with cheapest-falsification experiment."
+readme = "README.md"
+license = { text = "Apache-2.0" }
+requires-python = ">=3.10"
+authors = [
+    { name = "crisprking" },
+]
+keywords = [
+    "drug discovery",
+    "target validation",
+    "computational biology",
+    "reproducibility",
+    "falsifiability",
+    "bioinformatics",
+]
+classifiers = [
+    "Development Status :: 4 - Beta",
+    "Intended Audience :: Science/Research",
+    "License :: OSI Approved :: Apache Software License",
+    "Operating System :: OS Independent",
+    "Programming Language :: Python :: 3",
+    "Programming Language :: Python :: 3.10",
+    "Programming Language :: Python :: 3.11",
+    "Programming Language :: Python :: 3.12",
+    "Topic :: Scientific/Engineering :: Bio-Informatics",
+    "Topic :: Scientific/Engineering :: Chemistry",
+]
+dependencies = [
+    "pyyaml>=6.0",
+]
+
+[project.optional-dependencies]
+validate = [
+    "pydantic>=2.0",
+]
+live = [
+    "requests>=2.28",
+]
+dev = [
+    "pytest>=7.0",
+    "pytest-cov>=4.0",
+    "ruff>=0.4",
+]
+all = [
+    "requests>=2.28",
+    "pydantic>=2.0",
+    "pytest>=7.0",
+    "pytest-cov>=4.0",
+    "ruff>=0.4",
+]
+
+[project.urls]
+Homepage = "https://github.com/crisprking/falsifiable-targets"
+Documentation = "https://github.com/crisprking/falsifiable-targets/tree/main/docs"
+Repository = "https://github.com/crisprking/falsifiable-targets"
+Issues = "https://github.com/crisprking/falsifiable-targets/issues"
+Changelog = "https://github.com/crisprking/falsifiable-targets/blob/main/CHANGELOG.md"
+
+[project.scripts]
+ft-audit = "run_audit:main"
+ft-smoke = "smoke_test:main"
+ft-validate = "validate_claim:main"
+
+# -- setuptools-specific config -------------------------------------------
+#
+# v1.4.1 packaging fix:
+#   - sentinels/ and claims/ are now declared as packages so their YAML
+#     files ship in the wheel via package-data.
+#   - include-package-data=true honors MANIFEST.in for the sdist path.
+#
+# This solves the "FileNotFoundError: .../sentinels/v1_sentinels.yaml"
+# bug seen on clean installs (Kaggle, Colab, sandboxed CI).
+
+[tool.setuptools]
+py-modules = ["smoke_test", "run_audit", "validate_claim", "_version"]
+include-package-data = true
+
+[tool.setuptools.packages.find]
+include = ["adapters*", "sentinels*", "claims*"]
+
+[tool.setuptools.package-data]
+adapters = ["*.yaml"]
+sentinels = ["*.yaml"]
+claims = ["*.yaml"]
+
+[tool.setuptools.dynamic]
+version = { attr = "_version.__version__" }
+
+# -- ruff: linter + formatter --------------------------------------------
+
+[tool.ruff]
+line-length = 100
+target-version = "py310"
+extend-exclude = [".ae_cache", "reports", ".venv"]
+
+[tool.ruff.lint]
+select = [
+    "E",   # pycodestyle errors
+    "W",   # pycodestyle warnings
+    "F",   # pyflakes
+    "I",   # isort
+    "B",   # flake8-bugbear
+    "UP",  # pyupgrade
+]
+ignore = [
+    "E501",  # line too long (handled by formatter)
+    "B008",  # function call in default arg
+]
+
+[tool.ruff.lint.per-file-ignores]
+"tests/*" = ["E402"]  # tests do sys.path.insert before imports - intentional
+
+# -- pytest -----------------------------------------------------------------
+
+[tool.pytest.ini_options]
+minversion = "7.0"
+testpaths = ["tests"]
+addopts = [
+    "-ra",
+    "--strict-markers",
+    "--strict-config",
+]
+markers = [
+    "live: tests that require live network access (skipped in CI)",
+]

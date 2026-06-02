@@ -1,0 +1,35 @@
+claim:
+  target_symbol: "Ipi1 (KXX81897.1)"
+  uniprot_id: null
+  indication: "Madurella mycetoma (chronic subcutaneous fungal infection)"
+  mechanism: |
+    Ipi1 is a component of the Rix1 complex required for pre-60S ribosome
+    biogenesis. Essential in S. cerevisiae. The fungal protein presents a
+    high-confidence (pLDDT 93.2) AlphaFold model with a 497 A^3 fpocket
+    detected pocket (score 0.749). No prior chemistry exists against this
+    gene in ChEMBL as of the locked query date (May 2026).
+  claim_type: novel_target
+  source_url: "https://github.com/crisprking/madurella-target-discovery"
+
+fixture:
+  orthology:
+    sources_agreeing: 2
+    sources_total: 4
+    ortholog_count_human_pathogen: 1
+  chemistry:
+    chembl_distinct_compounds: 0
+    max_phase: 0
+  genetics: {}
+  expression: {}
+  structure:
+    pdb_count: 0
+    structure_resolved: false
+    alphafold_plddt: 93.2
+    fpocket_score: 0.749
+    fpocket_volume_a3: 497
+  reproducibility:
+    retracted: false
+    rebuttals_count: 0
+    independent_replications: 0
+  selectivity:
+    selectivity_data: false

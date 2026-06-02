@@ -1,0 +1,47 @@
+# Paralog map for v1.2.0 R6 class-collapse heuristic.
+#
+# Maps a primary target's UniProt accession to a list of paralog
+# UniProt accessions whose ChEMBL chemistry pool will be compared
+# against the primary's for the heuristic class-collapse caveat.
+#
+# This file is MANUALLY CURATED. It encodes domain knowledge about
+# which paralogs are clinically/structurally relevant for class-
+# collapse risk. It is NOT a comprehensive paralog database.
+#
+# Adding a target here is an explicit claim: "for this target, if
+# its ChEMBL chemistry pool is small relative to these named
+# paralogs, the framework should flag it as a class-collapse risk."
+#
+# Methodology for adding entries:
+# 1. The primary and paralogs should share a Pfam class (verifiable
+#    via UniProt cross-references).
+# 2. The paralogs should be ones the field DOES routinely confuse
+#    or co-target. A few-fold compound-pool difference between
+#    truly orthogonal proteins is not class-collapse risk.
+# 3. Cite the rationale in the comment block below the entry.
+
+paralog_map:
+
+  # TYK2 (psoriasis target) - JAK family. Pan-JAK selectivity is the
+  # canonical class-collapse risk for kinase-domain inhibitors.
+  # Deucravacitinib's clinical value depends on its JH2-domain binding
+  # to avoid this overlap; the framework's heuristic check is whether
+  # the broader JAK family has overshadowing ChEMBL chemistry.
+  P29597:
+    primary_symbol: TYK2
+    paralog_symbol: "JAK family (JAK1, JAK2, JAK3)"
+    paralogs:
+      - {symbol: JAK1, uniprot_id: P23458}
+      - {symbol: JAK2, uniprot_id: O60674}
+      - {symbol: JAK3, uniprot_id: P52333}
+
+  # Note: PCSK9 (Q8NBP7) intentionally has NO paralog entry. PCSK9 is
+  # a proprotein convertase with paralogs (PCSK1-9), but the LDL-C
+  # mechanism is mediated specifically by PCSK9's LDLR-binding role,
+  # which is non-redundant - the paralog set would not be informative
+  # for the LDL-C indication. Class-collapse risk depends on indication,
+  # not just sequence relatedness. Absent entries do not trigger the
+  # heuristic.
+
+  # Note: TNF (P01375) - cytokine, not an enzyme; class-collapse heuristic
+  # is conceptually inapplicable. Absent entry.
