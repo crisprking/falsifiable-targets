@@ -59,6 +59,8 @@ COLOC_Q = """query($id:String!){ credibleSet(studyLocusId:$id){ studyLocusId
     otherStudyLocus { qtlGeneId study { target { id approvedSymbol } } } } } } }"""
 
 def cis_signs(studyLocusId, ensembl, symbol, h4_min):
+    """Strong directional cis colocs as [(sign,h4,qtltype)]: gene IS the target (qtlGeneId or
+    study.target, Ensembl/symbol), h4>=floor, sign present. Excludes trans (PLA2G7-type)."""
     d = post(COLOC_Q, {"id": studyLocusId}, label=f"coloc:{studyLocusId[:10]}")
     cs = ((d or {}).get("data") or {}).get("credibleSet") or {}
     rows = ((cs.get("colocalisation") or {}).get("rows")) or []
