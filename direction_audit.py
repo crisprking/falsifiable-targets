@@ -206,3 +206,46 @@ def verdict_with_fallback(ensembl, efo, mechanism, h4_min=H4_MIN):
                falsifier=f"direction recovered via {bm_name} (causal proxy); an MR of {bm_name}->disease, or a disease-endpoint coloc, upgrades it to direct.")
     out["sha256"] = hashlib.sha256(f"{ensembl}|{efo}|biomarker|{bm_name}|{endo}".encode()).hexdigest()
     return out
+
+
+# --- confidence tiering (added; pQTL corroboration vs eQTL-only) --------------
+def cis_qtl_dirs(ensembl, efo, h4_min=H4_MIN):
+    """eQTL and pQTL cis-coloc directions for the target (for confidence tiering)."""
+    sym, ids = gwas_locus_ids(ensembl, efo)
+    eq_p = eq_n = pq_p = pq_n = 0
+    for lid in ids:
+        for sign, _h4, qt in cis_signs(lid, ensembl, sym, h4_min):
+            if abs(sign) < MAG:
+                continue
+            if qt == "eqtl":
+                eq_p += sign > 0; eq_n += sign < 0
+            elif qt == "pqtl":
+                pq_p += sign > 0; pq_n += sign < 0
+    def _d(p, n):
+        if p + n == 0:
+            return None
+        if max(p, n) / (p + n) < FRAC:
+            return "conflicted"
+        return "inhibitor" if p >= n else "activator"
+    return {"eqtl_dir": _d(eq_p, eq_n), "pqtl_dir": _d(pq_p, pq_n),
+            "eqtl": "%d+/%d-" % (eq_p, eq_n), "pqtl": "%d+/%d-" % (pq_p, pq_n)}
+
+def confidence_tier(recovered, pqtl_dir):
+    """Recovery confidence: HIGH = pQTL corroborates the call; CAVEAT = pQTL conflicts; STANDARD = eQTL-only."""
+    if recovered not in ("inhibitor", "activator"):
+        return "REFUSED"
+    if pqtl_dir in ("inhibitor", "activator"):
+        return "HIGH" if pqtl_dir == recovered else "CAVEAT"
+    return "STANDARD"
+
+def verdict_tiered(ensembl, efo, mechanism):
+    """verdict() + a confidence tier. Curated/functional labels outrank coloc:
+    LABEL > HIGH (pQTL) > STANDARD (eQTL-only) > CAVEAT (eQTL/pQTL conflict)."""
+    v = verdict(ensembl, efo, mechanism)
+    if str(v.get("verdict", "")).startswith("LABEL_"):
+        v["confidence_tier"] = "LABEL"
+        return v
+    q = cis_qtl_dirs(ensembl, efo)
+    v.update({"eqtl_dir": q["eqtl_dir"], "pqtl_dir": q["pqtl_dir"],
+              "confidence_tier": confidence_tier(v.get("direction"), q["pqtl_dir"])})
+    return v
