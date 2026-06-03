@@ -29,19 +29,30 @@ GENETIC_SOURCES = {"gwas_credible_sets","gene_burden","eva","eva_somatic","cling
 MECH = {"inhibitor":"inhibitor","antagonist":"inhibitor","blocker":"inhibitor","degrader":"inhibitor",
         "activator":"activator","agonist":"activator","potentiator":"activator"}
 
+class OpenTargetsError(RuntimeError):
+    """A query hard-failed (network, non-retryable HTTP, or GraphQL errors with no
+    usable data). We RAISE rather than return None/empty so a transient failure can
+    never masquerade as 'gene has no evidence' and silently corrupt coverage/consensus."""
+
 def post(q, variables=None, label="", retries=3):
+    last = None
     for a in range(retries):
         try:
             r = requests.post(OT, json={"query": q, "variables": variables or {}}, timeout=60)
         except requests.RequestException as e:
-            print(f"  !! net {label}: {e}"); return None
+            last = f"network: {e}"; time.sleep(2 ** a); continue          # FIX E: retry transient network errors
         if r.status_code == 200:
             d = r.json()
-            if "errors" in d: print(f"  !! gql {label}: {json.dumps(d['errors'])[:240]}")
+            if "errors" in d:
+                data = d.get("data")
+                if data is None or all(v is None for v in data.values()):
+                    raise OpenTargetsError(f"{label}: GraphQL errors with no data: {json.dumps(d['errors'])[:200]}")  # FIX C
+                print(f"  !! gql {label} (partial data, proceeding): {json.dumps(d['errors'])[:160]}")
             return d
-        if r.status_code in (429, 502, 503): time.sleep(2 ** a); continue
-        print(f"  !! HTTP {r.status_code} {label}"); return None
-    return None
+        if r.status_code in (429, 502, 503):
+            last = f"HTTP {r.status_code}"; time.sleep(2 ** a); continue
+        raise OpenTargetsError(f"{label}: HTTP {r.status_code}")                # FIX D: hard HTTP -> raise, not silent None
+    raise OpenTargetsError(f"{label}: failed after {retries} attempts ({last})")  # FIX E: exhausted -> raise
 
 def gwas_locus_ids(ensembl, efo, cap=80):
     q = """query($e:String!,$f:String!){ target(ensemblId:$e){ approvedSymbol
@@ -51,7 +62,7 @@ def gwas_locus_ids(ensembl, efo, cap=80):
     tgt = ((d or {}).get("data") or {}).get("target") or {}
     rows = ((tgt.get("evidences") or {}).get("rows")) or []
     ids = [(r.get("credibleSet") or {}).get("studyLocusId") for r in rows]
-    return tgt.get("approvedSymbol"), [i for i in dict.fromkeys(ids) if i][:cap]
+    return tgt.get("approvedSymbol"), sorted({i for i in ids if i})[:cap]   # FIX F: deterministic subset (was raw API order)
 
 COLOC_Q = """query($id:String!){ credibleSet(studyLocusId:$id){ studyLocusId
   colocalisation(studyTypes:[eqtl, pqtl]){ rows {
@@ -73,7 +84,7 @@ def cis_signs(studyLocusId, ensembl, symbol, h4_min):
                  or (sym_u and (tgt.get("approvedSymbol") or "").upper() == sym_u)
         h4 = r.get("h4"); sign = r.get("betaRatioSignAverage")
         if not is_cis or sign is None: continue
-        if isinstance(h4, (int, float)) and h4 < h4_min: continue
+        if not isinstance(h4, (int, float)) or h4 < h4_min: continue   # FIX A: null/absent posterior fails the floor
         qt = "pqtl" if "pqtl" in str(r.get("rightStudyType")).lower() else \
              ("eqtl" if "eqtl" in str(r.get("rightStudyType")).lower() else "other")
         out.append((sign, h4, qt))
@@ -204,7 +215,10 @@ def verdict_with_fallback(ensembl, efo, mechanism, h4_min=H4_MIN):
                confidence=f"moderate-minus (biomarker-mediated via {bm_name}; {int(round(r['consensus']*100))}% over {r['n_loci_decided']} loci)",
                recovery=r,
                falsifier=f"direction recovered via {bm_name} (causal proxy); an MR of {bm_name}->disease, or a disease-endpoint coloc, upgrades it to direct.")
-    out["sha256"] = hashlib.sha256(f"{ensembl}|{efo}|biomarker|{bm_name}|{endo}".encode()).hexdigest()
+    bpayload = {"rule": "R3+recovery/biomarker-bridge", "ensembl": ensembl, "efo": efo,
+                "mechanism": claim, "bridge": bm_name, "verdict": out["verdict"],
+                "vouches": concord, "direction": endo}                          # FIX B: full content-address (was a colliding string)
+    out["sha256"] = hashlib.sha256(json.dumps(bpayload, sort_keys=True, separators=(",", ":")).encode()).hexdigest()
     return out
 
 
