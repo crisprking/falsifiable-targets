@@ -43,7 +43,7 @@ def post(q, variables=None, label="", retries=3):
         print(f"  !! HTTP {r.status_code} {label}"); return None
     return None
 
-def gwas_locus_ids(ensembl, efo, cap=40):   # cap for the validation sweep
+def gwas_locus_ids(ensembl, efo, cap=80):
     q = """query($e:String!,$f:String!){ target(ensemblId:$e){ approvedSymbol
       evidences(efoIds:[$f], datasourceIds:["gwas_credible_sets"], size:300){
         rows{ credibleSet { studyLocusId } } } } }"""
@@ -59,8 +59,6 @@ COLOC_Q = """query($id:String!){ credibleSet(studyLocusId:$id){ studyLocusId
     otherStudyLocus { qtlGeneId study { target { id approvedSymbol } } } } } } }"""
 
 def cis_signs(studyLocusId, ensembl, symbol, h4_min):
-    """Strong directional cis colocs as [(sign,h4,qtltype)]: gene IS the target (qtlGeneId or
-    study.target, Ensembl/symbol), h4>=floor, sign present. Excludes trans (PLA2G7-type)."""
     d = post(COLOC_Q, {"id": studyLocusId}, label=f"coloc:{studyLocusId[:10]}")
     cs = ((d or {}).get("data") or {}).get("credibleSet") or {}
     rows = ((cs.get("colocalisation") or {}).get("rows")) or []
