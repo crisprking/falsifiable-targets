@@ -1,0 +1,19 @@
+{
+  "panel_sha": "5ac82f6268a65c38",
+  "bridge": "LDL->CAD (validated 4/4), INSUFFICIENT-only",
+  "baseline": {
+    "coverage": "6/12 (50%)",
+    "accuracy_rescued": "5/6 (83%)"
+  },
+  "with_fallback": {
+    "coverage": "7/12 (58%)",
+    "accuracy_rescued": "6/7 (86%)"
+  },
+  "moved": [
+    "HMGCR"
+  ],
+  "hmgcr_sha": "0ee31f05e941",
+  "labels": "6/6",
+  "contested_refused": "1/1 (GIPR)",
+  "note": "only HMGCR moved; direct calls, labels, IL6R decoy flag, TYK2 error, and GIPR refusal all unchanged."
+}

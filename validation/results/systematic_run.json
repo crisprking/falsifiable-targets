@@ -1,0 +1,174 @@
+{
+  "panel_sha": "5ac82f6268a65c38",
+  "note": "live Open Targets run; TSLP row contaminated (EFO_0000270 invalid) and excluded from valid-target coverage",
+  "n_known": 18,
+  "n_rescued": 6,
+  "n_refused": 5,
+  "n_decoy_flagged": 1,
+  "coverage_as_run": "6/12 (0.50)",
+  "coverage_valid_targets": "6/11 (0.55)",
+  "n_correct": 5,
+  "accuracy_rescued": "5/6 (0.83)",
+  "wrong": [
+    "TYK2"
+  ],
+  "decoy_flagged": [
+    "IL6R"
+  ],
+  "contested_refused": "1/1",
+  "label_correct": "6/6",
+  "per_target": [
+    {
+      "sym": "PCSK9",
+      "efo": "EFO_0001645",
+      "verdict": "RECOVERED_CONCORDANT",
+      "dir": "inhibitor",
+      "cons": 0.97,
+      "sha": "eb6730582cee"
+    },
+    {
+      "sym": "HMGCR",
+      "efo": "EFO_0001645",
+      "verdict": "INSUFFICIENT_DIRECTION",
+      "dir": null,
+      "cons": 1.0,
+      "sha": "0b4b359b15f2"
+    },
+    {
+      "sym": "NPC1L1",
+      "efo": "EFO_0004611",
+      "verdict": "LABEL_CONCORDANT",
+      "dir": "inhibitor",
+      "cons": null,
+      "sha": "b42a33df4d7d"
+    },
+    {
+      "sym": "ANGPTL3",
+      "efo": "EFO_0004530",
+      "verdict": "LABEL_CONCORDANT",
+      "dir": "inhibitor",
+      "cons": null,
+      "sha": "85c32c4d3c75"
+    },
+    {
+      "sym": "APOC3",
+      "efo": "EFO_0004530",
+      "verdict": "LABEL_CONCORDANT",
+      "dir": "inhibitor",
+      "cons": null,
+      "sha": "9fce8f07c60d"
+    },
+    {
+      "sym": "LPL",
+      "efo": "EFO_0004530",
+      "verdict": "LABEL_CONCORDANT",
+      "dir": "activator",
+      "cons": null,
+      "sha": "24409ed52442"
+    },
+    {
+      "sym": "CETP",
+      "efo": "EFO_0001645",
+      "verdict": "RECOVERED_CONCORDANT",
+      "dir": "inhibitor",
+      "cons": 1.0,
+      "sha": "275524228dce"
+    },
+    {
+      "sym": "PPARG",
+      "efo": "MONDO_0005148",
+      "verdict": "LABEL_CONCORDANT",
+      "dir": "activator",
+      "cons": null,
+      "sha": "d16c597bc405"
+    },
+    {
+      "sym": "GLP1R",
+      "efo": "MONDO_0005148",
+      "verdict": "RECOVERED_CONCORDANT",
+      "dir": "activator",
+      "cons": 1.0,
+      "sha": "0062a7410fa1"
+    },
+    {
+      "sym": "DPP4",
+      "efo": "MONDO_0005148",
+      "verdict": "INSUFFICIENT_DIRECTION",
+      "dir": null,
+      "cons": 0.0,
+      "sha": "88d8d0db2752"
+    },
+    {
+      "sym": "SLC22A12",
+      "efo": "EFO_0004274",
+      "verdict": "LABEL_CONCORDANT",
+      "dir": "inhibitor",
+      "cons": null,
+      "sha": "59912f59c4b3"
+    },
+    {
+      "sym": "IL6R",
+      "efo": "EFO_0000685",
+      "verdict": "RECOVERED_CAVEAT_DECOY",
+      "dir": "activator",
+      "cons": 1.0,
+      "sha": "515834d00c3d"
+    },
+    {
+      "sym": "TNF",
+      "efo": "EFO_0000685",
+      "verdict": "INSUFFICIENT_DIRECTION",
+      "dir": null,
+      "cons": 0.0,
+      "sha": "d6932ef7db72"
+    },
+    {
+      "sym": "IL23R",
+      "efo": "EFO_0003767",
+      "verdict": "RECOVERED_CONCORDANT",
+      "dir": "inhibitor",
+      "cons": 0.93,
+      "sha": "83eaab5c000b"
+    },
+    {
+      "sym": "IL12B",
+      "efo": "EFO_0003767",
+      "verdict": "RECOVERED_CONCORDANT",
+      "dir": "inhibitor",
+      "cons": 1.0,
+      "sha": "c520001a2dfc"
+    },
+    {
+      "sym": "IL4R",
+      "efo": "EFO_0000274",
+      "verdict": "INSUFFICIENT_DIRECTION",
+      "dir": null,
+      "cons": 0.0,
+      "sha": "748b1acb5e25"
+    },
+    {
+      "sym": "TYK2",
+      "efo": "EFO_0000676",
+      "verdict": "RECOVERED_DISCORDANT",
+      "dir": "activator",
+      "cons": 1.0,
+      "sha": "baff0f4b9717"
+    },
+    {
+      "sym": "TSLP",
+      "efo": "EFO_0000270",
+      "verdict": "INSUFFICIENT_DIRECTION_EFO_INVALID",
+      "dir": null,
+      "cons": 0.0,
+      "sha": "0aaf96e7d25e"
+    },
+    {
+      "sym": "GIPR",
+      "efo": "MONDO_0005148",
+      "verdict": "RECOVERY_CONFLICTED",
+      "dir": null,
+      "cons": 0.73,
+      "sha": "b984b4efa127"
+    }
+  ]
+}

@@ -1,0 +1,29 @@
+{
+  "test": "dual-endpoint concordance, lipid pathway, CAD vs LDL",
+  "bridge_concordance": "4/4 (100%)",
+  "both_endpoints": [
+    "PCSK9",
+    "CETP",
+    "LDLR",
+    "ABCG5"
+  ],
+  "directions": {
+    "PCSK9": "inhibitor/inhibitor",
+    "CETP": "inhibitor/inhibitor",
+    "LDLR": "activator/activator",
+    "ABCG5": "activator/activator"
+  },
+  "ldl_rescues_of_CAD_refusals": {
+    "HMGCR": "inhibitor (95% cons, 40 loci)",
+    "MTTP": "inhibitor (7 loci)"
+  },
+  "note": "both directions represented in concordance; activator validated via ABCG5/LDLR. LPA correctly had no LDL bridge (distinct particle). APOB/NPC1L1 refused (coding-driven signal).",
+  "shas": {
+    "PCSK9": "d22a15b40350",
+    "HMGCR": "8bf48166c0fc",
+    "MTTP": "46b33f0f13fe",
+    "CETP": "a66fc4c295ca",
+    "LDLR": "d49a00a7bd48",
+    "ABCG5": "4c841040bfb6"
+  }
+}

@@ -1,0 +1,8 @@
+{
+  "test": "dual-endpoint concordance, T2D vs HbA1c/glucose",
+  "bridge_concordance": "2/2 (100%) [GLP1R, PPARG]",
+  "panel_coverage_added": 0,
+  "dpp4": "refused both (no glycemic cis-coloc)",
+  "safety_rail_catch": "GIPR (contested control) was CONFLICTED on T2D-direct but the glycemic bridge tried to rescue it to 'inhibitor' (9 loci). Fix: fallback fires ONLY on INSUFFICIENT_DIRECTION, never on RECOVERY_CONFLICTED. GIPR now stays refused.",
+  "biology_note": "GIPR conflicted-on-disease but clean-on-glycemic reflects the GIP agonist/antagonist paradox; the divergence is preserved, not resolved."
+}
