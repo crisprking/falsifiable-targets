@@ -9,33 +9,42 @@ by confidence tier (pQTL-corroborated vs eQTL-only — where documented decoupli
 live), QUERY_FAILED rows excluded from denominators, and the Open Targets data version +
 engine sha pinned in the manifest so the numbers are reproducible.
 """
-import sys, os, json, hashlib, math, glob, time
+import sys, os, json, hashlib, math, glob, time, shutil, subprocess
 
-# ---- force a FRESH import of the real engine (kills SYM-stub kernel pollution) ----
-def _engine_dir():
-    cands = []
-    try:
-        here = os.path.dirname(os.path.abspath(__file__)); cands += [os.path.join(here, ".."), here]
-    except NameError:
-        pass
-    cands.append(os.getcwd())
-    for base in ("/kaggle/working", "/kaggle/input"):
-        if os.path.isdir(base):
-            cands += [os.path.dirname(p) for p in glob.glob(base + "/**/direction_audit.py", recursive=True)]
-    for c in cands:
-        if c and os.path.exists(os.path.join(c, "direction_audit.py")):
-            return os.path.abspath(c)
-    return None
+# ---- acquire the HARDENED engine, ignoring stale copies (e.g. an old /kaggle/input snapshot) ----
+REPO = "https://github.com/crisprking/falsifiable-targets.git"
+_FTREPO = "/kaggle/working/ftrepo"
 
-_d = _engine_dir()
-if _d and _d not in sys.path:
+def _ensure_hardened_engine():
+    """Return a dir whose direction_audit.py actually IS the hardened engine (defines
+    cis_qtl_dirs + OpenTargetsError). Prefers a local hardened copy; else clones the repo
+    fresh. Deliberately skips stale copies such as an attached /kaggle/input dataset."""
+    seen = []
+    locals_ = [os.getcwd(), _FTREPO] + [os.path.dirname(p) for p in glob.glob("/kaggle/working/**/direction_audit.py", recursive=True)]
+    for c in locals_:
+        f = os.path.join(c, "direction_audit.py")
+        if c in seen or not os.path.exists(f):
+            continue
+        seen.append(c)
+        src = open(f, encoding="utf-8", errors="ignore").read()
+        if "def cis_qtl_dirs" in src and "class OpenTargetsError" in src:
+            return c
+    if os.path.isdir(_FTREPO):
+        shutil.rmtree(_FTREPO)
+    print("  no hardened engine found locally -> cloning the repo")
+    subprocess.run(["git", "clone", "--depth", "1", REPO, _FTREPO], check=True, capture_output=True, text=True)
+    return _FTREPO
+
+_d = _ensure_hardened_engine()
+if _d not in sys.path:
     sys.path.insert(0, _d)
-sys.modules.pop("direction_audit", None)   # CRUCIAL: drop any test-stubbed copy, import fresh
+sys.modules.pop("direction_audit", None)   # CRUCIAL: drop any stale/stubbed copy, import the hardened one
 import direction_audit as _da
 from direction_audit import post, verdict, cis_qtl_dirs, confidence_tier, OpenTargetsError
 if getattr(_da.gwas_locus_ids, "__name__", "") == "<lambda>":
     raise RuntimeError("direction_audit is monkeypatched by a test cell (gwas_locus_ids is a stub). "
                        "Run > Restart kernel, then run THIS cell first.")
+print(f"  engine: {_da.__file__}")
 ENGINE_SHA = hashlib.sha256(open(_da.__file__, "rb").read()).hexdigest()
 
 # documented: measured abundance decoupled from function (soluble/decoy isoform). curated, not auto-detected.

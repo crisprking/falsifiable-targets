@@ -1,19 +1,51 @@
 {
+  "engine_sha": "2f4db5904002859a967393ca926ab667c97193b4df743580599b89aeddc7ee6d",
+  "opentargets_version": {
+    "dataVersion": {
+      "year": "26",
+      "month": "03",
+      "iteration": null
+    },
+    "apiVersion": {
+      "x": "26",
+      "y": "03",
+      "z": "1"
+    }
+  },
   "panel_sha": "5ac82f6268a65c38",
-  "note": "live Open Targets run; TSLP row contaminated (EFO_0000270 invalid) and excluded from valid-target coverage",
   "n_known": 18,
+  "n_query_failed": 0,
   "n_rescued": 6,
   "n_refused": 5,
   "n_decoy_flagged": 1,
-  "coverage_as_run": "6/12 (0.50)",
-  "coverage_valid_targets": "6/11 (0.55)",
+  "coverage": 0.5,
+  "coverage_ci": [
+    0.254,
+    0.746
+  ],
   "n_correct": 5,
-  "accuracy_rescued": "5/6 (0.83)",
+  "accuracy_rescued": 0.8333333333333334,
+  "accuracy_ci": [
+    0.436,
+    0.97
+  ],
+  "accuracy_by_tier": {
+    "HIGH": [
+      3,
+      3
+    ],
+    "STANDARD": [
+      2,
+      3
+    ],
+    "CAVEAT": [
+      0,
+      0
+    ]
+  },
+  "wrong_among_pqtl_corroborated": [],
   "wrong": [
     "TYK2"
-  ],
-  "decoy_flagged": [
-    "IL6R"
   ],
   "contested_refused": "1/1",
   "label_correct": "6/6",
@@ -23,6 +55,7 @@
       "efo": "EFO_0001645",
       "verdict": "RECOVERED_CONCORDANT",
       "dir": "inhibitor",
+      "tier": "HIGH",
       "cons": 0.97,
       "sha": "eb6730582cee"
     },
@@ -31,6 +64,7 @@
       "efo": "EFO_0001645",
       "verdict": "INSUFFICIENT_DIRECTION",
       "dir": null,
+      "tier": null,
       "cons": 1.0,
       "sha": "0b4b359b15f2"
     },
@@ -39,6 +73,7 @@
       "efo": "EFO_0004611",
       "verdict": "LABEL_CONCORDANT",
       "dir": "inhibitor",
+      "tier": null,
       "cons": null,
       "sha": "b42a33df4d7d"
     },
@@ -47,6 +82,7 @@
       "efo": "EFO_0004530",
       "verdict": "LABEL_CONCORDANT",
       "dir": "inhibitor",
+      "tier": null,
       "cons": null,
       "sha": "85c32c4d3c75"
     },
@@ -55,6 +91,7 @@
       "efo": "EFO_0004530",
       "verdict": "LABEL_CONCORDANT",
       "dir": "inhibitor",
+      "tier": null,
       "cons": null,
       "sha": "9fce8f07c60d"
     },
@@ -63,6 +100,7 @@
       "efo": "EFO_0004530",
       "verdict": "LABEL_CONCORDANT",
       "dir": "activator",
+      "tier": null,
       "cons": null,
       "sha": "24409ed52442"
     },
@@ -71,6 +109,7 @@
       "efo": "EFO_0001645",
       "verdict": "RECOVERED_CONCORDANT",
       "dir": "inhibitor",
+      "tier": "STANDARD",
       "cons": 1.0,
       "sha": "275524228dce"
     },
@@ -79,6 +118,7 @@
       "efo": "MONDO_0005148",
       "verdict": "LABEL_CONCORDANT",
       "dir": "activator",
+      "tier": null,
       "cons": null,
       "sha": "d16c597bc405"
     },
@@ -87,6 +127,7 @@
       "efo": "MONDO_0005148",
       "verdict": "RECOVERED_CONCORDANT",
       "dir": "activator",
+      "tier": "STANDARD",
       "cons": 1.0,
       "sha": "0062a7410fa1"
     },
@@ -95,6 +136,7 @@
       "efo": "MONDO_0005148",
       "verdict": "INSUFFICIENT_DIRECTION",
       "dir": null,
+      "tier": null,
       "cons": 0.0,
       "sha": "88d8d0db2752"
     },
@@ -103,6 +145,7 @@
       "efo": "EFO_0004274",
       "verdict": "LABEL_CONCORDANT",
       "dir": "inhibitor",
+      "tier": null,
       "cons": null,
       "sha": "59912f59c4b3"
     },
@@ -111,6 +154,7 @@
       "efo": "EFO_0000685",
       "verdict": "RECOVERED_CAVEAT_DECOY",
       "dir": "activator",
+      "tier": "HIGH",
       "cons": 1.0,
       "sha": "515834d00c3d"
     },
@@ -119,6 +163,7 @@
       "efo": "EFO_0000685",
       "verdict": "INSUFFICIENT_DIRECTION",
       "dir": null,
+      "tier": null,
       "cons": 0.0,
       "sha": "d6932ef7db72"
     },
@@ -127,6 +172,7 @@
       "efo": "EFO_0003767",
       "verdict": "RECOVERED_CONCORDANT",
       "dir": "inhibitor",
+      "tier": "HIGH",
       "cons": 0.93,
       "sha": "83eaab5c000b"
     },
@@ -135,6 +181,7 @@
       "efo": "EFO_0003767",
       "verdict": "RECOVERED_CONCORDANT",
       "dir": "inhibitor",
+      "tier": "HIGH",
       "cons": 1.0,
       "sha": "c520001a2dfc"
     },
@@ -143,6 +190,7 @@
       "efo": "EFO_0000274",
       "verdict": "INSUFFICIENT_DIRECTION",
       "dir": null,
+      "tier": null,
       "cons": 0.0,
       "sha": "748b1acb5e25"
     },
@@ -151,14 +199,16 @@
       "efo": "EFO_0000676",
       "verdict": "RECOVERED_DISCORDANT",
       "dir": "activator",
+      "tier": "STANDARD",
       "cons": 1.0,
       "sha": "baff0f4b9717"
     },
     {
       "sym": "TSLP",
       "efo": "EFO_0000270",
-      "verdict": "INSUFFICIENT_DIRECTION_EFO_INVALID",
+      "verdict": "INSUFFICIENT_DIRECTION",
       "dir": null,
+      "tier": null,
       "cons": 0.0,
       "sha": "0aaf96e7d25e"
     },
@@ -167,8 +217,10 @@
       "efo": "MONDO_0005148",
       "verdict": "RECOVERY_CONFLICTED",
       "dir": null,
+      "tier": null,
       "cons": 0.73,
       "sha": "b984b4efa127"
     }
-  ]
+  ],
+  "manifest_sha": "f928d2381648686e7f6db1bb5d4ad3cbf46eb51a820218b6c2a75859bcecd017"
 }
