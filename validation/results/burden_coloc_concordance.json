@@ -1,0 +1,290 @@
+{
+  "scan": "burden_x_coloc_concordance_hardened",
+  "engine_sha": "2f4db5904002859a967393ca926ab667c97193b4df743580599b89aeddc7ee6d",
+  "opentargets_version": {
+    "name": "Open Targets GraphQL & REST API Beta",
+    "dataVersion": {
+      "year": "26",
+      "month": "03",
+      "iteration": null
+    },
+    "apiVersion": {
+      "x": "26",
+      "y": "03",
+      "z": "1"
+    }
+  },
+  "n_genes_attempted": 44,
+  "n_query_failed": 0,
+  "query_failed": [],
+  "pair_level": {
+    "n_pairs": 13,
+    "n_genes": 8,
+    "agree": 10,
+    "agreement_rate": 0.7692307692307693,
+    "agreement_ci": [
+      0.497,
+      0.918
+    ],
+    "decoupling": 3,
+    "decoupling_rate": 0.23076923076923078
+  },
+  "gene_level": {
+    "n_genes": 8,
+    "agree": 6,
+    "agreement_rate": 0.75,
+    "agreement_ci": [
+      0.409,
+      0.929
+    ],
+    "decoupling": 2,
+    "decoupling_rate": 0.25,
+    "decoupling_ci": [
+      0.071,
+      0.591
+    ],
+    "decoupled_genes": [
+      {
+        "gene": "GCK",
+        "burden": "activator",
+        "coloc": "inhibitor",
+        "agree": false,
+        "n_traits": 2,
+        "mixed_within_gene": false
+      },
+      {
+        "gene": "IRS1",
+        "burden": "activator",
+        "coloc": "inhibitor",
+        "agree": false,
+        "n_traits": 1,
+        "mixed_within_gene": false
+      }
+    ],
+    "genes": [
+      {
+        "gene": "ABCG5",
+        "burden": "activator",
+        "coloc": "activator",
+        "agree": true,
+        "n_traits": 2,
+        "mixed_within_gene": true
+      },
+      {
+        "gene": "ANGPTL3",
+        "burden": "inhibitor",
+        "coloc": "inhibitor",
+        "agree": true,
+        "n_traits": 1,
+        "mixed_within_gene": false
+      },
+      {
+        "gene": "ANGPTL4",
+        "burden": "inhibitor",
+        "coloc": "inhibitor",
+        "agree": true,
+        "n_traits": 1,
+        "mixed_within_gene": false
+      },
+      {
+        "gene": "GCK",
+        "burden": "activator",
+        "coloc": "inhibitor",
+        "agree": false,
+        "n_traits": 2,
+        "mixed_within_gene": false
+      },
+      {
+        "gene": "GRN",
+        "burden": "activator",
+        "coloc": "activator",
+        "agree": true,
+        "n_traits": 1,
+        "mixed_within_gene": false
+      },
+      {
+        "gene": "IRS1",
+        "burden": "activator",
+        "coloc": "inhibitor",
+        "agree": false,
+        "n_traits": 1,
+        "mixed_within_gene": false
+      },
+      {
+        "gene": "LDLR",
+        "burden": "activator",
+        "coloc": "activator",
+        "agree": true,
+        "n_traits": 1,
+        "mixed_within_gene": false
+      },
+      {
+        "gene": "PCSK9",
+        "burden": "inhibitor",
+        "coloc": "inhibitor",
+        "agree": true,
+        "n_traits": 4,
+        "mixed_within_gene": false
+      }
+    ]
+  },
+  "pairs": [
+    {
+      "gene": "PCSK9",
+      "ens": "ENSG00000169174",
+      "trait_id": "EFO_0000589",
+      "trait": "metabolic disease",
+      "burden": "inhibitor",
+      "coloc": "inhibitor",
+      "agree": true,
+      "consensus": 0.92,
+      "n_loci": 24,
+      "n_burden": 14
+    },
+    {
+      "gene": "PCSK9",
+      "ens": "ENSG00000169174",
+      "trait_id": "EFO_0004911",
+      "trait": "familial hypercholesterolemia",
+      "burden": "inhibitor",
+      "coloc": "inhibitor",
+      "agree": true,
+      "consensus": 1.0,
+      "n_loci": 7,
+      "n_burden": 7
+    },
+    {
+      "gene": "PCSK9",
+      "ens": "ENSG00000169174",
+      "trait_id": "HP_0003124",
+      "trait": "Hypercholesterolemia",
+      "burden": "inhibitor",
+      "coloc": "inhibitor",
+      "agree": true,
+      "consensus": 0.93,
+      "n_loci": 29,
+      "n_burden": 20
+    },
+    {
+      "gene": "PCSK9",
+      "ens": "ENSG00000169174",
+      "trait_id": "Orphanet_309005",
+      "trait": "Disorder of lipid metabolism",
+      "burden": "inhibitor",
+      "coloc": "inhibitor",
+      "agree": true,
+      "consensus": 1.0,
+      "n_loci": 4,
+      "n_burden": 5
+    },
+    {
+      "gene": "LDLR",
+      "ens": "ENSG00000130164",
+      "trait_id": "HP_0003124",
+      "trait": "Hypercholesterolemia",
+      "burden": "activator",
+      "coloc": "activator",
+      "agree": true,
+      "consensus": 0.8,
+      "n_loci": 10,
+      "n_burden": 51
+    },
+    {
+      "gene": "ABCG5",
+      "ens": "ENSG00000138075",
+      "trait_id": "EFO_0000589",
+      "trait": "metabolic disease",
+      "burden": "activator",
+      "coloc": "activator",
+      "agree": true,
+      "consensus": 0.8,
+      "n_loci": 5,
+      "n_burden": 2
+    },
+    {
+      "gene": "ABCG5",
+      "ens": "ENSG00000138075",
+      "trait_id": "EFO_0004799",
+      "trait": "cholelithiasis",
+      "burden": "inhibitor",
+      "coloc": "inhibitor",
+      "agree": true,
+      "consensus": 1.0,
+      "n_loci": 3,
+      "n_burden": 7
+    },
+    {
+      "gene": "ANGPTL3",
+      "ens": "ENSG00000132855",
+      "trait_id": "EFO_0000589",
+      "trait": "metabolic disease",
+      "burden": "inhibitor",
+      "coloc": "inhibitor",
+      "agree": true,
+      "consensus": 1.0,
+      "n_loci": 4,
+      "n_burden": 6
+    },
+    {
+      "gene": "ANGPTL4",
+      "ens": "ENSG00000167772",
+      "trait_id": "EFO_0000589",
+      "trait": "metabolic disease",
+      "burden": "inhibitor",
+      "coloc": "inhibitor",
+      "agree": true,
+      "consensus": 1.0,
+      "n_loci": 3,
+      "n_burden": 2
+    },
+    {
+      "gene": "GCK",
+      "ens": "ENSG00000106633",
+      "trait_id": "EFO_0000400",
+      "trait": "diabetes mellitus",
+      "burden": "activator",
+      "coloc": "inhibitor",
+      "agree": false,
+      "consensus": 1.0,
+      "n_loci": 4,
+      "n_burden": 97
+    },
+    {
+      "gene": "GCK",
+      "ens": "ENSG00000106633",
+      "trait_id": "MONDO_0005148",
+      "trait": "type 2 diabetes mellitus",
+      "burden": "activator",
+      "coloc": "inhibitor",
+      "agree": false,
+      "consensus": 1.0,
+      "n_loci": 9,
+      "n_burden": 71
+    },
+    {
+      "gene": "IRS1",
+      "ens": "ENSG00000169047",
+      "trait_id": "HP_0000924",
+      "trait": "Abnormality of the skeletal system",
+      "burden": "activator",
+      "coloc": "inhibitor",
+      "agree": false,
+      "consensus": 1.0,
+      "n_loci": 12,
+      "n_burden": 3
+    },
+    {
+      "gene": "GRN",
+      "ens": "ENSG00000030582",
+      "trait_id": "MONDO_0001627",
+      "trait": "dementia",
+      "burden": "activator",
+      "coloc": "activator",
+      "agree": true,
+      "consensus": 1.0,
+      "n_loci": 3,
+      "n_burden": 7
+    }
+  ],
+  "manifest_sha": "dfa9d7cdd0796ccafc6ea964e60850d687798b23f600394ba7c7dbb4a240bd6a"
+}

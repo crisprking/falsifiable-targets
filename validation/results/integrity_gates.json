@@ -1,0 +1,128 @@
+{
+  "engine_sha": "2f4db5904002859a967393ca926ab667c97193b4df743580599b89aeddc7ee6d",
+  "opentargets_version": {
+    "dataVersion": {
+      "year": "26",
+      "month": "03",
+      "iteration": null
+    },
+    "apiVersion": {
+      "x": "26",
+      "y": "03",
+      "z": "1"
+    }
+  },
+  "gate_a_sign": "PASS \u2014 sign correct in both directions",
+  "calibration": {
+    "inhibitor": {
+      "matched": 5,
+      "recovered": 5
+    },
+    "activator": {
+      "matched": 3,
+      "recovered": 3
+    }
+  },
+  "calibration_overall": [
+    8,
+    8
+  ],
+  "calibration_ci": [
+    0.676,
+    1.0
+  ],
+  "sign_misses": [],
+  "controls": [
+    {
+      "sym": "PCSK9",
+      "expect": "inhibitor",
+      "recovered": "inhibitor",
+      "consensus": 0.97,
+      "n_loci": 29
+    },
+    {
+      "sym": "CETP",
+      "expect": "inhibitor",
+      "recovered": "inhibitor",
+      "consensus": 1.0,
+      "n_loci": 5
+    },
+    {
+      "sym": "ANGPTL3",
+      "expect": "inhibitor",
+      "recovered": "inhibitor",
+      "consensus": 0.94,
+      "n_loci": 16
+    },
+    {
+      "sym": "NPC1L1",
+      "expect": "inhibitor",
+      "recovered": null,
+      "consensus": 0.76,
+      "n_loci": 25
+    },
+    {
+      "sym": "IL23R",
+      "expect": "inhibitor",
+      "recovered": "inhibitor",
+      "consensus": 0.93,
+      "n_loci": 15
+    },
+    {
+      "sym": "IL12B",
+      "expect": "inhibitor",
+      "recovered": "inhibitor",
+      "consensus": 1.0,
+      "n_loci": 3
+    },
+    {
+      "sym": "LPL",
+      "expect": "activator",
+      "recovered": "activator",
+      "consensus": 0.89,
+      "n_loci": 55
+    },
+    {
+      "sym": "GLP1R",
+      "expect": "activator",
+      "recovered": "activator",
+      "consensus": 1.0,
+      "n_loci": 7
+    },
+    {
+      "sym": "PPARG",
+      "expect": "activator",
+      "recovered": "activator",
+      "consensus": 0.85,
+      "n_loci": 27
+    }
+  ],
+  "gate_b_region_capable": true,
+  "independence": [
+    {
+      "gene": "PCSK9",
+      "n_credible_sets": 29,
+      "n_studies": 21,
+      "n_regions": 1,
+      "cons_set": 0.97,
+      "cons_region": 1.0
+    },
+    {
+      "gene": "TYK2",
+      "n_credible_sets": 17,
+      "n_studies": 14,
+      "n_regions": 1,
+      "cons_set": 1.0,
+      "cons_region": 1.0
+    },
+    {
+      "gene": "IL23R",
+      "n_credible_sets": 15,
+      "n_studies": 14,
+      "n_regions": 1,
+      "cons_set": 0.93,
+      "cons_region": 1.0
+    }
+  ],
+  "manifest_sha": "e3d22e0c19e03294fa0469aff30edc468095c2065307472341a0c4ef8d4b52ed"
+}
