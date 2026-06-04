@@ -41,6 +41,7 @@ import direction_audit as da
 #   LABELS[(ensembl, efo)] -> (label, n)   (what labelled_direction returns)
 # ----------------------------------------------------------------------------
 LOCI, SIGNS, LABELS = {}, {}, {}
+_ORIG = {n: getattr(da, n) for n in ("gwas_locus_ids", "cis_signs", "labelled_direction")}
 da.gwas_locus_ids   = lambda ens, efo, cap=40: ("SYM", list(LOCI.get(efo, [])))
 da.cis_signs        = lambda lid, ens, sym, h4: list(SIGNS.get(lid, []))
 da.labelled_direction = lambda ens, efo: LABELS.get((ens, efo), (None, 0))
@@ -157,6 +158,10 @@ da.BIOMARKER_BRIDGES = {"DIS": [("B1", "LDL", +1), ("B2", "ApoB", +1)]}
 _reset(); _loci("DIS", [[1.0], [1.0]]); _loci("B1", [[1.0], [1.0], [1.0]]); _loci("B2", [[-1.0], [-1.0], [-1.0]])
 v = da.verdict_with_fallback("ENS", "DIS", "inhibitor")
 check("bridges disagree -> stays INSUFFICIENT (no rescue)", v["verdict"] == "INSUFFICIENT_DIRECTION")
+
+# restore the real engine functions so this never pollutes other notebook cells
+for _n, _f in _ORIG.items():
+    setattr(da, _n, _f)
 
 print("\n" + "=" * 70)
 print(f"PASSED {len(PASS)}   FAILED {len(FAIL)}")
