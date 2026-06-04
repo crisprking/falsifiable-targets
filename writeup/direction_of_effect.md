@@ -78,8 +78,6 @@ Two integrity gates underwrite these numbers. **Sign-orientation calibration** r
 
 The accuracy number isn't the integrity signal — anyone can report a number. The signal is what the audit did with its failure. **TYK2 is in the table marked WRONG, in the same pre-committed run, under its own SHA.** The framework did not quietly drop the target it got wrong or retrofit a flag to launder it; it recorded the miss next to the hits, in the direction the claim's structure predicts, where anyone can diff it against the code. A target audit that hides its own errors is a marketing asset. One that prints them is an instrument. It happened twice: TYK2 stands in the table as a published error, and — below — the contested control GIPR stopped the tool from overturning its own refusal. The framework's failures are load-bearing, not buried.
 
-*(The strongest version of this beat — the project demoting its creator's own flagship target — belongs to the broader falsifiable-targets work, not this run; I'll add it once the exact verdict is pinned.)*
-
 ## Where it breaks — one blind spot, twice
 
 Two targets failed. They are the same lesson from two angles.

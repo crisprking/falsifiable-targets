@@ -45,6 +45,7 @@ classifiers = [
 ]
 dependencies = [
     "pyyaml>=6.0",
+    "requests>=2.28",
 ]
 
 [project.optional-dependencies]
@@ -58,6 +59,7 @@ dev = [
     "pytest>=7.0",
     "pytest-cov>=4.0",
     "ruff>=0.4",
+    "build>=1.0",
 ]
 all = [
     "requests>=2.28",
@@ -65,6 +67,7 @@ all = [
     "pytest>=7.0",
     "pytest-cov>=4.0",
     "ruff>=0.4",
+    "build>=1.0",
 ]
 
 [project.urls]
@@ -90,7 +93,7 @@ ft-validate = "validate_claim:main"
 # bug seen on clean installs (Kaggle, Colab, sandboxed CI).
 
 [tool.setuptools]
-py-modules = ["smoke_test", "run_audit", "validate_claim", "_version"]
+py-modules = ["direction_audit", "smoke_test", "run_audit", "validate_claim", "_version"]
 include-package-data = true
 
 [tool.setuptools.packages.find]
@@ -109,7 +112,7 @@ version = { attr = "_version.__version__" }
 [tool.ruff]
 line-length = 100
 target-version = "py310"
-extend-exclude = [".ae_cache", "reports", ".venv", "notebooks"]
+extend-exclude = [".ae_cache", "reports", ".venv", "notebooks", "build", "dist"]
 
 [tool.ruff.lint]
 select = [
