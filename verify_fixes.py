@@ -3,28 +3,38 @@ verify_fixes.py — proves the six direction_audit fixes offline (no network).
 Mocks only the HTTP boundary (requests.post) and runs the REAL parsing/transport.
 Run:  python verify_fixes.py   ->  expect 6/6 and exit 0.
 """
-import os, sys, glob, json, hashlib
+import glob
+import os
+import sys
 from unittest import mock
 
-def _locate():
-    try:
-        import direction_audit; return None
-    except Exception: pass
-    c = []
-    try: c += [os.path.dirname(os.path.abspath(__file__)), os.path.join(os.path.dirname(os.path.abspath(__file__)), "..")]
-    except NameError: pass
-    c.append(os.getcwd())
-    for b in ("/kaggle/working", "/kaggle/input"):
-        if os.path.isdir(b): c += [os.path.dirname(p) for p in glob.glob(b + "/**/direction_audit.py", recursive=True)]
-    for d in c:
-        if d and os.path.exists(os.path.join(d, "direction_audit.py")): return d
-    raise FileNotFoundError("direction_audit.py not found")
+REPO = "https://github.com/crisprking/falsifiable-targets.git"
+_FTREPO = "/kaggle/working/ftrepo"  # allowed: guarded Kaggle fallback, not a hardcoded project root
 
-_d = _locate()
-if _d: sys.path.insert(0, _d)
+def _ensure_hardened_engine():
+    """Return a dir whose direction_audit.py IS the hardened engine (cis_qtl_dirs +
+    OpenTargetsError). Prefers a local hardened copy; else clones the repo. Skips stale
+    copies such as an attached dataset snapshot (the cause of phantom fix failures)."""
+    import shutil
+    import subprocess
+    seen, cands = [], [os.getcwd(), _FTREPO]
+    cands += [os.path.dirname(p) for p in glob.glob("/kaggle/working/**/direction_audit.py", recursive=True)]  # allowed: guarded fallback
+    for c in cands:
+        f = os.path.join(c, "direction_audit.py")
+        if c in seen or not os.path.exists(f): continue
+        seen.append(c)
+        src = open(f, encoding="utf-8", errors="ignore").read()
+        if "def cis_qtl_dirs" in src and "class OpenTargetsError" in src: return c
+    if os.path.isdir(_FTREPO): shutil.rmtree(_FTREPO)
+    subprocess.run(["git", "clone", "--depth", "1", REPO, _FTREPO], check=True, capture_output=True, text=True)
+    return _FTREPO
+
+_d = _ensure_hardened_engine()
+sys.path.insert(0, _d)
 sys.modules.pop("direction_audit", None)        # never trust a stale cached module
-import direction_audit as da
 import requests
+
+import direction_audit as da
 
 print("direction_audit fix verification")
 print("  using:", getattr(da, "__file__", "?"))

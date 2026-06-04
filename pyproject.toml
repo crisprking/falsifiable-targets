@@ -109,7 +109,7 @@ version = { attr = "_version.__version__" }
 [tool.ruff]
 line-length = 100
 target-version = "py310"
-extend-exclude = [".ae_cache", "reports", ".venv"]
+extend-exclude = [".ae_cache", "reports", ".venv", "notebooks"]
 
 [tool.ruff.lint]
 select = [
@@ -123,10 +123,19 @@ select = [
 ignore = [
     "E501",  # line too long (handled by formatter)
     "B008",  # function call in default arg
+    "E701",  # multiple statements on one line (colon) - deliberate compact style
+    "E702",  # multiple statements on one line (semicolon) - deliberate compact style
 ]
 
 [tool.ruff.lint.per-file-ignores]
 "tests/*" = ["E402"]  # tests do sys.path.insert before imports - intentional
+# direction_audit.py is sha-pinned to the result manifests (engine_sha in validation/results/*.json);
+# its lint is suppressed, never edited, so the recorded sha stays valid and reproducible.
+"direction_audit.py" = ["UP031", "I001", "E741", "E401"]
+# these scripts resolve/clone the engine onto sys.path before importing it (bootstrap-before-import).
+"verify_fixes.py" = ["E402"]
+"validation/*" = ["E402", "UP031", "E741", "B007"]
+"adapters/*" = ["UP031"]
 
 # -- pytest -----------------------------------------------------------------
 

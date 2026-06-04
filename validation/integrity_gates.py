@@ -13,7 +13,15 @@ GATE B  locus independence. For high-locus genes, cluster loci by lead-variant
         genomic region and recompute consensus over INDEPENDENT regions. If regions
         << loci, a "100% over N loci" claim is pseudo-replicated, not N signals.
 """
-import sys, os, json, hashlib, math, glob, re, time, shutil, subprocess
+import glob
+import hashlib
+import json
+import math
+import os
+import re
+import shutil
+import subprocess
+import sys
 
 # ---- acquire the HARDENED engine (ignore stale /kaggle/input copies; clone if needed) ----
 REPO = "https://github.com/crisprking/falsifiable-targets.git"
@@ -40,7 +48,8 @@ if _d not in sys.path:
     sys.path.insert(0, _d)
 sys.modules.pop("direction_audit", None)
 import direction_audit as _da
-from direction_audit import post, recover, gwas_locus_ids, cis_signs, OpenTargetsError
+from direction_audit import OpenTargetsError, cis_signs, gwas_locus_ids, post, recover
+
 if getattr(_da.gwas_locus_ids, "__name__", "") == "<lambda>":
     raise RuntimeError("direction_audit is monkeypatched by a test cell. Run > Restart kernel, then run THIS cell first.")
 H4_MIN, MAG, FRAC, MIN_LOCI = _da.H4_MIN, _da.MAG, _da.FRAC, _da.MIN_LOCI

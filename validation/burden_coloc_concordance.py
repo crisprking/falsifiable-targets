@@ -38,8 +38,15 @@ associations rather than one guessed trait). "Restart kernel, run this first" is
 safest, but it self-heals the engine import (and refuses a test-stubbed module)
 regardless of kernel state.
 """
-import sys, os, json, time, hashlib, math, glob, re, shutil, subprocess
-from collections import defaultdict, Counter
+import glob
+import hashlib
+import json
+import math
+import os
+import shutil
+import subprocess
+import sys
+from collections import Counter, defaultdict
 
 # ---------------------------------------------------------------------------
 # 1) acquire the HARDENED engine. Ignore stale /kaggle/input snapshots (they lack
@@ -73,7 +80,8 @@ if _d not in sys.path:
     sys.path.insert(0, _d)
 sys.modules.pop("direction_audit", None)            # drop any test-stubbed copy; import fresh
 import direction_audit as da
-from direction_audit import post, recover, desired_from_label, OpenTargetsError
+from direction_audit import OpenTargetsError, desired_from_label, post, recover
+
 if getattr(da.gwas_locus_ids, "__name__", "") == "<lambda>":
     raise RuntimeError("direction_audit is monkeypatched by a test cell (gwas_locus_ids is a stub). "
                        "Run > Restart kernel, then run THIS cell FIRST.")
@@ -233,16 +241,16 @@ print("HEADLINE  (coloc-recovery vs the rare-variant functional gold standard)")
 print("=" * W)
 print(f"  genes attempted                     : {len(GENES)}"
       + (f"   | {len(failed)} QUERY_FAILED (excluded): {[f['gene'] for f in failed]}" if failed else ""))
-print(f"  PAIR level  (gene x trait, over-counts ontology):")
+print("  PAIR level  (gene x trait, over-counts ontology):")
 print(f"     pairs with BOTH signals          : {len(results)}  across {len({r['gene'] for r in results})} genes")
 print(f"     AGREE  coloc == burden(function) : {ci_str(len(pair_agree), len(results))}")
 print(f"     DISAGREE abundance != function   : {ci_str(len(pair_diss),  len(results))}")
-print(f"  GENE level  (one call per gene -- the defensible unit):")
+print("  GENE level  (one call per gene -- the defensible unit):")
 print(f"     genes with BOTH signals          : {len(gene_rows)}")
 print(f"     AGREE                            : {ci_str(len(gene_agree), len(gene_rows))}")
 print(f"     DISAGREE (decoupling rate)       : {ci_str(len(gene_diss),  len(gene_rows))}")
 
-print(f"\n  decoupled genes (audit -- classify: regulatory decoupling vs spurious trait):")
+print("\n  decoupled genes (audit -- classify: regulatory decoupling vs spurious trait):")
 for g in gene_diss:
     egs = [r for r in results if r["gene"] == g["gene"] and not r["agree"]]
     traits = "; ".join(sorted({r["trait"][:30] for r in egs}))

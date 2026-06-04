@@ -26,7 +26,10 @@
 #   recovery is an INFERENCE -> vouches at 'coloc-derived' confidence, with the
 #   locus-consensus fraction attached so a borderline call (e.g. GIPR 79%) is visible.
 # ============================================================================
-import json, time, hashlib
+import hashlib
+import json
+import time
+
 import requests
 
 OT = "https://api.platform.opentargets.org/api/v4/graphql"
@@ -177,7 +180,6 @@ def verdict(ensembl, efo, mechanism, h4_min=H4_MIN):
     return res
 
 
-import hashlib
 
 # documented: measured abundance decoupled from function (soluble/decoy isoform). curated, not auto-detected.
 DECOY = {"ENSG00000160712"}   # IL6R (sIL6R decoy; rs2228145)

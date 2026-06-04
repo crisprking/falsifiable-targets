@@ -10,7 +10,7 @@ That is the gap. The field has been treating association as approval, and the bi
 
 ## What exists, and what none of it does
 
-Genetic priority scores are not new. Nelson and colleagues showed targets with human genetic support succeed roughly twice as often; Minikel and colleagues updated and sharpened that estimate; Duffy and colleagues built a continuous genetic priority score; Open Targets publishes its own harmonized direction-of-effect layer. They are useful and I lean on the same data.
+Genetic priority scores are not new. Nelson and colleagues showed targets with human genetic support succeed roughly twice as often; Minikel and colleagues sharpened that to about a 2.6-fold enrichment; Duffy and colleagues built a continuous genetic priority score; Open Targets publishes its own harmonized direction-of-effect layer. They are useful and I lean on the same data.
 
 What none of them do is **refuse**. They emit a number, or a direction, for every target — and where the underlying direction is actually missing, that output is resting on association alone. Which is precisely where the confident, wrong answers live. The contribution here is not another score. It is a tool that says *I don't know* exactly when it doesn't, and recovers a real direction exactly when it can.
 
@@ -37,7 +37,7 @@ I don't trust one colocalisation; molecular-QTL data is noisy and *trans* signal
 
 So for any target–disease claim the audit does one of three things: use a **burden-derived label** if present (the functional axis — what losing the gene does, which is what an inhibitor mimics; drug-derived labels are excluded as circular); else attempt **colocalisation recovery**; else **refuse** — `INSUFFICIENT_DIRECTION` or `RECOVERY_CONFLICTED`, and say which. Every verdict is content-addressed: the inputs hash to a sha256, so any claim below is checkable by anyone running the same query against public data.
 
-I calibrated on two targets whose direction isn't in question. PCSK9 recovered `inhibitor` at 97% consensus over 29 loci (matching evolocumab). LPL, where genetics and physiology both say *more is better*, recovered `activator` in both directions tested. Both ways, right, from colocalisation alone.
+I calibrated on two targets whose direction isn't in question. PCSK9 recovered `inhibitor` at 97% consensus over its *cis*-locus (matching evolocumab) — and as the locus-independence gate below shows, that 97% is agreement across 21 distinct GWAS studies, not 29 independent loci. LPL, where genetics and physiology both say *more is better*, recovered `activator` in both directions tested. Both ways, right, from colocalisation alone.
 
 ## Validation against approved drugs
 
@@ -65,11 +65,14 @@ A method that rescues PCSK9 isn't validated — I might have picked targets wher
 | TSLP | asthma | tezepelumab | inhibitor | *invalid EFO* | excluded | `0aaf96e7d25e` |
 | GIPR | T2D | (contested) | contested | coloc | refused (conflicted, 73%) | `b984b4efa127` |
 
-The numbers, on the 11 valid GWAS-only targets:
+The numbers, on the 12 GWAS-only targets — the claims a label-based tool is blind to:
 
-- **Coverage** — recovery returned a direction for **6 of 11 (≈55%)** of the GWAS-only claims a label-based tool is blind to. The rest refused, on absent or thin cis-colocalisation.
-- **Accuracy** — of those six, **five matched the approved drug (≈83%)**. PCSK9, CETP, IL23R, IL12B → inhibitor; GLP1R → activator. One was wrong.
+- **Coverage** — recovery returned a direction for **6 of 12 = 50%** (Wilson 95% CI 25–75%). The rest refused, on absent or thin cis-colocalisation. (Drop TSLP, whose disease ontology is invalid, and it reads 6 of 11 ≈ 55%; I lead with the figure the committed manifest records.)
+- **Accuracy** — of those six, **five matched the approved drug = 83%** (CI 44–97%). PCSK9, CETP, IL23R, IL12B → inhibitor; GLP1R → activator. One was wrong (TYK2).
+- **Reliability by confidence tier** — the load-bearing number, not the headline accuracy. Each recovered call is graded by whether a *protein* QTL corroborates it: **HIGH** (pQTL agrees) was **3 of 3** correct, **STANDARD** (expression-QTL only) was **2 of 3**, and **CAVEAT** (pQTL conflicts) did not arise on this panel. **Zero calls were wrong among the pQTL-corroborated tier.** The single miss falls in the tier the engine pre-flags as weaker — TYK2, below.
 - **Burden labels** matched the drug **6 of 6**. The **contested control (GIPR) refused**, at 73% consensus.
+
+Two integrity gates underwrite these numbers. **Sign-orientation calibration** runs nine controls whose direction is textbook (six inhibitor, three activator); NPC1L1 abstains at 76%, below the consensus floor, and of the eight that do recover, **all eight point the correct way — zero reversals**. A flipped sign convention would have made PCSK9 read `activator`; it didn't, in either direction. **Locus independence** then asks whether "N loci" means N independent regions — it doesn't, and shouldn't: *cis*-colocalisation localises to the target's own locus, so each target is a single genomic region, and the consensus percentage is cross-study agreement *at* that locus. PCSK9's 97% is 21 distinct GWAS studies, TYK2's 100% is 14, IL23R's 93% is 14 — real replication across cohorts, reported as such rather than as an inflated independent-loci count.
 
 ## The tool publishes its own misses
 
@@ -83,13 +86,15 @@ Two targets failed. They are the same lesson from two angles.
 
 **IL6R.** Tocilizumab inhibits it; recovery returned `activator`. The Asp358Ala variant raises *soluble* IL6R while *lowering* signaling and reducing RA and cardiovascular risk — it phenocopies the drug. The pQTL measures the soluble pool, which runs opposite to the signaling the drug acts on. Flagged in advance as a documented decoy → `RECOVERED_CAVEAT_DECOY`. And a diagnostic confirms the eQTL and pQTL *agree*, so no internal consistency check can catch it.
 
-**TYK2.** Deucravacitinib inhibits it, and the protective genetics (the P1104A partial-loss-of-function allele) agree. Recovery returned `activator`, 100% over 17 loci — reported as a genuine error, not flagged in advance. The reason is the same family: P1104A acts on enzyme *activity*, a coding-function variant; the cis-eQTL coloc reads *expression abundance*; those axes come apart for TYK2 (which also sits in a gene-dense, high-LD stretch of 19p13 where colocalisation is fragile).
+**TYK2.** Deucravacitinib inhibits it, and the protective genetics (the P1104A partial-loss-of-function allele) agree. Recovery returned `activator`, 100% consensus — which the locus-independence gate shows is 14 GWAS studies agreeing at one *cis*-locus, so the miss is robust, not a noisy fluke. It is reported as a genuine error, and it lands in the STANDARD (expression-QTL-only) tier: the engine never had protein corroboration for it, which is exactly why the tier system pre-flags such calls as weaker. The reason is the same family: P1104A acts on enzyme *activity*, a coding-function variant; the cis-eQTL coloc reads *expression abundance*; those axes come apart for TYK2 (which also sits in a gene-dense, high-LD stretch of 19p13 where colocalisation is fragile).
 
 The conceptual core, pulled out of the weeds:
 
 > **Colocalisation recovers the direction of the *abundance* → trait relationship. For most targets, abundance is function, and the recovered direction is the therapeutic one. It diverges exactly where abundance is decoupled from function** — soluble decoys whose measured pool is inverse to signaling, and targets whose causal genetics are coding-activity variants invisible to expression QTLs.
 
 This is also why burden-derived labels are the better evidence where they exist: a burden test reads the *functional* axis, which is what a drug mimics. Recovery is a good proxy for that — about four times in five here — but a proxy, and it fails in a characterizable way, not a random one. Critically, the failure is not detectable from colocalisation data alone, so it is handled by curation and disclosure, not a cleverer filter.
+
+And the flag is no longer merely curated — it is now *discoverable*. A burden test reads function; colocalisation reads abundance; so wherever a target carries both, a disagreement between them is a candidate abundance≠function decoupling. Run that comparison across 44 candidate genes and the two directions agree, at the gene level, for **6 of 8** that overlap (**75%**, CI 41–93%). The disagreements are not noise. **GCK** is the worked example: loss-of-function *GCK* variants cause MODY2 hyperglycemia, so the functional direction is *activator* — and glucokinase activators (dorzagliatin, approved in China) are a real drug class — so burden correctly says `activator`, while coloc reads `inhibitor`, because glucokinase activity is set post-translationally by GKRP sequestration, invisible to an expression QTL. The same failure as TYK2, surfaced automatically rather than by hand. (One further gene-level disagreement, IRS1, is flagged as a likely trait-mismatch artifact, not asserted as a real decoupling.) The curated flag has become a measurement.
 
 ## Coverage where the disease is mute: the biomarker bridge
 
@@ -101,7 +106,7 @@ The rule that keeps this honest came from the contested control. When I extended
 
 ## What I'd claim
 
-A direction-of-effect audit can speak to the GWAS majority that label-based tools cannot — recovering a mechanism direction for roughly half of otherwise-silent claims directly, rising to 58% once a validated biomarker bridge fills the endpoint-sparse cases, at 83–86% accuracy against approved drugs — **if** it prefers burden-derived functional labels where they exist, refuses on thin or contested evidence instead of guessing, only trusts a biomarker bridge after it passes head-to-head concordance, and openly discloses its one structural blind spot. Not a black box that emits a confident mechanism for every target; a tool that rescues what it can defend, refuses what it can't, names where its own method is the wrong instrument, and hashes every verdict so you can check it.
+A direction-of-effect audit can speak to the GWAS majority that label-based tools cannot — recovering a mechanism direction for roughly half of otherwise-silent claims directly, rising to 58% once a validated biomarker bridge fills the endpoint-sparse cases, at 83–86% accuracy against approved drugs, with zero wrong among its protein-corroborated calls — **if** it prefers burden-derived functional labels where they exist, refuses on thin or contested evidence instead of guessing, only trusts a biomarker bridge after it passes head-to-head concordance, and openly discloses its one structural blind spot. Not a black box that emits a confident mechanism for every target; a tool that rescues what it can defend, refuses what it can't, names where its own method is the wrong instrument, and hashes every verdict so you can check it.
 
 ## Before your next target
 
@@ -109,7 +114,7 @@ Before you commit to a mechanism direction from genetic evidence alone, find out
 
 ## Limits and what's next
 
-This is a curated benchmark, not a population scan; turning "≈55% of these" into a platform-wide coverage statistic needs the bulk colocalisation layer and is the next build. The abundance≠function flag is curated (IL6R today; TYK2 a clear candidate), which catches documented cases and disclaims the rest. The natural sequel is a concordance scan — wherever a target has *both* a burden label and a coloc-recovered direction, the disagreements are this exact failure class, which turns the curated flag into a discovery method. And recovery is hostage to molecular-QTL coverage; most refusals are simply where cis-colocalisation doesn't exist yet.
+This is a curated benchmark, not a population scan; turning "50% of these" into a platform-wide coverage statistic needs the bulk colocalisation layer and is the next build. The abundance≠function flag began curated (IL6R, then TYK2) but is now a discovery method: the burden×coloc concordance scan above turns disagreements into candidate decouplings automatically, and surfaced GCK without prompting. And recovery is hostage to molecular-QTL coverage; most refusals are simply where cis-colocalisation doesn't exist yet.
 
 ## Code and data
 
@@ -119,10 +124,8 @@ Everything is public and reproducible at **[github.com/crisprking/falsifiable-ta
 
 ### References
 
-*Citations to confirm against final sources before publication.*
-
 1. Nelson MR, et al. The support of human genetic evidence for approved drug indications. *Nature Genetics*, 2015.
-2. Minikel EV, et al. Refining the impact of human genetic evidence on drug development. *Nature*, 2024.
+2. Minikel EV, et al. Refining the impact of genetic evidence on clinical success. *Nature*, 2024. (≈2.6-fold enrichment; DOI 10.1038/s41586-024-07316-0.)
 3. Duffy Á, Forgetta V, et al. A genetics-guided priority score for drug-target pairs. (genetic priority score work)
 4. Ochoa D, et al. The Open Targets Platform. *Nucleic Acids Research*. (platform + direction-of-effect documentation)
 5. Sabatine MS, et al. Evolocumab and clinical outcomes in patients with cardiovascular disease (FOURIER). *NEJM*, 2017.

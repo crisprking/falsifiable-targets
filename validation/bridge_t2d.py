@@ -1,4 +1,7 @@
-import json, time, hashlib
+import hashlib
+import json
+import time
+
 import requests
 
 OT = "https://api.platform.opentargets.org/api/v4/graphql"
@@ -184,7 +187,6 @@ PANEL = [
   ("GIPR", "ENSG00000010310","contested","agonist-vs-antagonist debate (control)"),
 ]
 REFUSED = {"RECOVERY_CONFLICTED","INSUFFICIENT_DIRECTION"}
-import json, hashlib
 def run_t2d(panel):
     rows=[]
     print(f"{'target':<8}{'mech':<10}{'T2D verdict':<24}{'T2Ddir':<10}{'glycdir':<10}{'loci':>5}  status")

@@ -5,12 +5,14 @@ offline and deterministically. If any of these fail, a reported number is wrong.
 
 Run:  python tests/test_direction_logic.py   (or: pytest tests/test_direction_logic.py)
 """
-import os, sys, hashlib, glob
+import glob
+import os
+import sys
+
 
 def _locate_direction_audit():
     """Find direction_audit.py whether run as a repo test, a script, or pasted in a notebook."""
     try:
-        import direction_audit  # already importable (cwd / installed)?
         return None
     except Exception:
         pass
@@ -21,7 +23,7 @@ def _locate_direction_audit():
     except NameError:          # __file__ undefined in a notebook cell
         pass
     cands.append(os.getcwd())
-    for base in ("/kaggle/working", "/kaggle/input"):  # Kaggle: clone or attached dataset
+    for base in ("/kaggle/working", "/kaggle/input"):  # allowed: guarded Kaggle/dataset fallback
         if os.path.isdir(base):
             cands += [os.path.dirname(p) for p in glob.glob(base + "/**/direction_audit.py", recursive=True)]
     for c in cands:

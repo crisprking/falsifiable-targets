@@ -1,4 +1,7 @@
-import json, time, hashlib
+import hashlib
+import json
+import time
+
 import requests
 
 OT = "https://api.platform.opentargets.org/api/v4/graphql"
@@ -183,7 +186,6 @@ LIPID = [
 ]
 REFUSED = {"RECOVERY_CONFLICTED","INSUFFICIENT_DIRECTION"}
 
-import json, hashlib
 def run_lipid(panel):
     rows=[]
     print(f"{'target':<9}{'mech':<10}{'CAD verdict':<24}{'CADdir':<10}{'LDLdir':<10}{'LDLloci':>7}  status")

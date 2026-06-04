@@ -9,7 +9,15 @@ by confidence tier (pQTL-corroborated vs eQTL-only — where documented decoupli
 live), QUERY_FAILED rows excluded from denominators, and the Open Targets data version +
 engine sha pinned in the manifest so the numbers are reproducible.
 """
-import sys, os, json, hashlib, math, glob, time, shutil, subprocess
+import glob
+import hashlib
+import json
+import math
+import os
+import shutil
+import subprocess
+import sys
+import time
 
 # ---- acquire the HARDENED engine, ignoring stale copies (e.g. an old /kaggle/input snapshot) ----
 REPO = "https://github.com/crisprking/falsifiable-targets.git"
@@ -40,7 +48,8 @@ if _d not in sys.path:
     sys.path.insert(0, _d)
 sys.modules.pop("direction_audit", None)   # CRUCIAL: drop any stale/stubbed copy, import the hardened one
 import direction_audit as _da
-from direction_audit import post, verdict, cis_qtl_dirs, confidence_tier, OpenTargetsError
+from direction_audit import OpenTargetsError, cis_qtl_dirs, confidence_tier, post, verdict
+
 if getattr(_da.gwas_locus_ids, "__name__", "") == "<lambda>":
     raise RuntimeError("direction_audit is monkeypatched by a test cell (gwas_locus_ids is a stub). "
                        "Run > Restart kernel, then run THIS cell first.")
