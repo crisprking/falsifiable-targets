@@ -1,35 +1,16 @@
-# Python
+# generated figure output (fig_boundary_surface.py writes this)
+fig_boundary_surface.png
+*.png
+
+# python
 __pycache__/
 *.pyc
-*.pyo
-*.egg-info/
-build/
-dist/
-
-# Test/lint caches
-.pytest_cache/
-.ruff_cache/
-.coverage
-htmlcov/
-
-# Adapter cache (deterministic but local-only - we don't commit raw API payloads)
-.ae_cache/
-
-# Virtualenvs
-.venv/
-venv/
-env/
-
-# Jupyter
 .ipynb_checkpoints/
-*.ipynb_checkpoints
 
-# OS junk
+# OS
 .DS_Store
-Thumbs.db
 
-# IDE
-.vscode/
-.idea/
-*.swp
-reports/
+# NOTE: the saved audit JSONs (scope_rule_grid.json, mapping_audit.json,
+# panel_bootstrap.json, indication_anchored.json) are NOT ignored — commit them
+# alongside a pinned Open Targets release if you want the figures reproducible
+# without re-querying.
